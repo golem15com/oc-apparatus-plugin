@@ -2,6 +2,12 @@
     "name": "keios/apparatus-framework",
     "description": "Keios Apparatus Application Framework library for OctoberCMS",
     "license": "MIT",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://keiosweb@bitbucket.org/keiosdevs/laravel-apparatus.git"
+        }
+    ],
     "authors": [
         {
             "name": "Łukasz Biały",
