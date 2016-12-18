@@ -53,7 +53,7 @@ class RouteResolver
     }
 
     /**
-     * @param $component
+     * @param string $component
      *
      * @return Page|null
      * @throws \Exception
@@ -81,7 +81,7 @@ class RouteResolver
     }
 
     /**
-     * @param $component
+     * @param string $component
      *
      * @return array|Page|null
      */
@@ -95,9 +95,9 @@ class RouteResolver
     }
 
     /**
-     * @param $url
+     * @param string $url
      *
-     * @return mixed
+     * @return string
      */
     public function stripUrlParameters($url)
     {
@@ -111,9 +111,9 @@ class RouteResolver
     }
 
     /**
-     * @param $component
+     * @param string $component
      *
-     * @return mixed|string
+     * @return string
      */
     public function resolveRouteWithoutParamsTo($component)
     {
@@ -133,7 +133,7 @@ class RouteResolver
 
 
     /**
-     * @param $component
+     * @param string $component
      * @param $parameter
      * @param $value
      *
@@ -185,14 +185,14 @@ class RouteResolver
     }
 
     /**
-     * @param $component
+     * @param string $component
      *
-     * @throws \Exception
+     * @throws \ApplicationException
      */
     protected function componentNotFound($component)
     {
         if ($this->config->get('app.debug')) {
-            throw new \Exception(sprintf(trans('keios.apparatus::lang.errors.pageWithComponentNotFound'), $component));
+            throw new \ApplicationException(sprintf(trans('keios.apparatus::lang.errors.pageWithComponentNotFound'), $component));
         } else {
             $this->log->error(sprintf(trans('keios.apparatus::lang.errors.pageWithComponentNotFound'), $component));
         }
@@ -200,14 +200,14 @@ class RouteResolver
 
     /**
      * @param $parameter
-     * @param $component
+     * @param string $component
      *
-     * @throws \Exception
+     * @throws \ApplicationException
      */
     protected function parameterNotFound($parameter, $component)
     {
         if ($this->config->get('app.debug')) {
-            throw new \Exception(
+            throw new \ApplicationException(
                 sprintf(trans('keios.apparatus::lang.errors.parameterNotFound'), $parameter, $component)
             );
         } else {

@@ -1,27 +1,31 @@
 {
-    "name": "keios/apparatus-framework",
-    "description": "Keios Apparatus Application Framework library for OctoberCMS",
-    "license": "MIT",
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://keiosweb@bitbucket.org/keiosdevs/laravel-apparatus.git"
-        }
-    ],
-    "authors": [
-        {
-            "name": "Łukasz Biały",
-            "email": "lukasz@c-call.eu"
-        }
-    ],
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://keiosweb@bitbucket.org/keiosdevs/laravel-apparatus.git"
-        }
-    ],
-    "minimum-stability": "dev",
-    "require": {
-        "keios/laravel-apparatus": "~1.0@dev"
+  "name": "keios/apparatus-framework",
+  "description": "Keios Apparatus Application Framework library for OctoberCMS",
+  "license": "MIT",
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://keiosweb@bitbucket.org/keiosdevs/laravel-apparatus.git"
     }
+  ],
+  "authors": [
+    {
+      "name": "Łukasz Biały",
+      "email": "lukasz@c-call.eu"
+    },
+    {
+      "name": "Jakub Zych",
+      "email": "jakub@keios.eu"
+    }
+  ],
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://keiosweb@bitbucket.org/keiosdevs/laravel-apparatus.git"
+    }
+  ],
+  "minimum-stability": "dev",
+  "require": {
+    "keios/laravel-apparatus": "~1.0@dev"
+  }
 }

@@ -42,6 +42,7 @@ class TranslApiController extends Controller
      * @param Request $request
      *
      * @return RedirectResponse|JsonResponse
+     * @throws \InvalidArgumentException
      */
     public function getTranslations(Request $request)
     {

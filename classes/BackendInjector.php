@@ -65,25 +65,25 @@ class BackendInjector
     }
 
     /**
-     * @param       $path
-     * @param array $attributes
+     * @param string $path
+     * @param array  $attributes
      */
-    public function addJs($path, $attributes = [])
+    public function addJs($path, array $attributes = [])
     {
         $this->jsAssets[] = ['path' => $path, 'attributes' => $attributes];
     }
 
     /**
-     * @param       $path
-     * @param array $attributes
+     * @param string $path
+     * @param array  $attributes
      */
-    public function addCss($path, $attributes = [])
+    public function addCss($path, array $attributes = [])
     {
         $this->cssAssets[] = ['path' => $path, 'attributes' => $attributes];
     }
 
     /**
-     * @param          $name
+     * @param string   $name
      * @param callable $handler
      * @param null     $extension
      */
