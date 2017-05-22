@@ -5,7 +5,6 @@ use Illuminate\Contracts\Config\Repository;
 use Cms\Classes\Theme;
 use Cms\Classes\Page;
 
-
 /**
  * Class RouteResolver
  *
@@ -56,6 +55,7 @@ class RouteResolver
      * @param string $component
      *
      * @return Page|null
+     * @throws \ApplicationException
      * @throws \Exception
      */
     public function getPageWithComponent($component)
@@ -84,14 +84,15 @@ class RouteResolver
      * @param string $component
      *
      * @return array|Page|null
+     * @throws \Exception
      */
     public function resolveRouteTo($component)
     {
         if ($page = $this->getPageWithComponent($component)) {
             return $page->settings['url'];
-        } else {
-            return $page;
         }
+
+        return $page;
     }
 
     /**
@@ -105,15 +106,16 @@ class RouteResolver
             $parts = explode('/:', $url);
 
             return $parts[0];
-        } else {
-            return $url;
         }
+
+        return $url;
     }
 
     /**
      * @param string $component
      *
      * @return string
+     * @throws \Exception
      */
     public function resolveRouteWithoutParamsTo($component)
     {
@@ -131,13 +133,13 @@ class RouteResolver
         return $this->stripUrlParameters($url);
     }
 
-
     /**
      * @param string $component
-     * @param $parameter
-     * @param $value
+     * @param        $parameter
+     * @param        $value
      *
      * @return mixed|null|string
+     * @throws \ApplicationException
      * @throws \Exception
      */
     public function resolveParameterizedRouteTo($component, $parameter, $value)
@@ -179,9 +181,9 @@ class RouteResolver
 
         if (strpos($url, ':') !== false) {
             return preg_replace('/\\:('.$parameterValue.')\\??/', $value, $url, -1);
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**
@@ -192,14 +194,16 @@ class RouteResolver
     protected function componentNotFound($component)
     {
         if ($this->config->get('app.debug')) {
-            throw new \ApplicationException(sprintf(trans('keios.apparatus::lang.errors.pageWithComponentNotFound'), $component));
-        } else {
-            $this->log->error(sprintf(trans('keios.apparatus::lang.errors.pageWithComponentNotFound'), $component));
+            throw new \ApplicationException(
+                sprintf(trans('keios.apparatus::lang.errors.pageWithComponentNotFound'), $component)
+            );
         }
+
+        $this->log->error(sprintf(trans('keios.apparatus::lang.errors.pageWithComponentNotFound'), $component));
     }
 
     /**
-     * @param $parameter
+     * @param        $parameter
      * @param string $component
      *
      * @throws \ApplicationException
@@ -210,10 +214,10 @@ class RouteResolver
             throw new \ApplicationException(
                 sprintf(trans('keios.apparatus::lang.errors.parameterNotFound'), $parameter, $component)
             );
-        } else {
-            $this->log->error(
-                sprintf(trans('keios.apparatus::lang.errors.parameterNotFound'), $parameter, $component)
-            );
         }
+
+        $this->log->error(
+            sprintf(trans('keios.apparatus::lang.errors.parameterNotFound'), $parameter, $component)
+        );
     }
 }

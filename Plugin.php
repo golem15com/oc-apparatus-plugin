@@ -5,7 +5,10 @@ use Illuminate\Foundation\AliasLoader;
 use Keios\Apparatus\Classes\BackendInjector;
 use Keios\Apparatus\Classes\DependencyInjector;
 use Keios\Apparatus\Classes\RouteResolver;
+use Keios\Apparatus\Console\Optimize;
 use System\Classes\PluginBase;
+use Keios\LaravelApparatus\LaravelApparatusServiceProvider;
+use October\Rain\Translation\Translator;
 
 /**
  * Apparatus Plugin Information File
@@ -34,7 +37,7 @@ class Plugin extends PluginBase
     public function registerComponents()
     {
         return [
-            'Keios\Apparatus\Components\Messaging' => 'apparatusFlashMessages'
+            Components\Messaging::class => 'apparatusFlashMessages'
         ];
     }
 
@@ -62,7 +65,7 @@ class Plugin extends PluginBase
                 'description' => 'keios.apparatus::lang.settings.messaging-description',
                 'category'    => 'Apparatus',
                 'icon'        => 'icon-globe',
-                'class'       => '\Keios\Apparatus\Models\Settings',
+                'class'       => Models\Settings::class,
                 'permissions' => ['keios.apparatus.access_settings'],
                 'order'       => 500,
                 'keywords'    => 'messages flash notifications'
@@ -75,8 +78,13 @@ class Plugin extends PluginBase
      */
     public function register()
     {
-        
-        $this->app->register('Keios\LaravelApparatus\LaravelApparatusServiceProvider');
+        $this->commands(
+            [
+                Optimize::class
+            ]
+        );
+
+        $this->app->register(LaravelApparatusServiceProvider::class);
 
         $this->app->singleton(
             'apparatus.route.resolver',
@@ -107,8 +115,8 @@ class Plugin extends PluginBase
     {
         $translator = $this->app->make('translator');
 
-        $this->app->when('Keios\Apparatus\Classes\TranslApiController')
-            ->needs('October\Rain\Translation\Translator')
+        $this->app->when(Classes\TranslApiController::class)
+            ->needs(Translator::class)
             ->give(
                 function () use ($translator) {
                     return $translator;
@@ -127,7 +135,7 @@ class Plugin extends PluginBase
         );
 
         $aliasLoader = AliasLoader::getInstance();
-        $aliasLoader->alias('Resolver', 'Keios\Apparatus\Facades\Resolver');
+        $aliasLoader->alias('Resolver', Facades\Resolver::class);
 
         $injector = $this->app->make('apparatus.backend.injector');
         $injector->addCss('/plugins/keios/apparatus/assets/css/animate.css');

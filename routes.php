@@ -18,7 +18,7 @@ Route::get(
 
         if (!$file = \System\Models\File::where('disk_name', $diskName)->first()) {
             return Redirect::to('/404');
-        };
+        }
 
         return $file->output('attachment');
     }

@@ -55,7 +55,7 @@ class BackendInjector
 
                 foreach ($this->ajaxHandlers as $handler) {
                     $controller->addDynamicMethod($handler['name'], $handler['function'], $handler['extension']);
-                };
+                }
 
                 if ($this->useBackendJSInjector) {
                     $controller->addJs('/plugins/keios/apparatus/assets/js/framework.validation.js', 'apparatus');

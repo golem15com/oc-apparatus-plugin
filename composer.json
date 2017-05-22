@@ -18,12 +18,6 @@
       "email": "jakub@keios.eu"
     }
   ],
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "https://keiosweb@bitbucket.org/keiosdevs/laravel-apparatus.git"
-    }
-  ],
   "minimum-stability": "dev",
   "require": {
     "keios/laravel-apparatus": "~1.0@dev"
