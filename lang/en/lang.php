@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'labels' => [
+    'labels'      => [
         'pluginName' => 'Business logic scenario processor',
     ],
     'errors'      => [
@@ -26,5 +26,13 @@ return [
     'permissions' => [
         'tab'             => 'Apparatus',
         'access_settings' => 'Settings access',
+    ],
+    'strings'     => [
+        'inject_main'         => 'Inject main script',
+        'inject_main_desc'    => 'Main script for displaying messages on framework events',
+        'inject_noty'         => 'Inject Noty.js',
+        'inject_noty_desc'    => 'Noty.js library for showing notifications.',
+        'inject_animate'      => 'Inject animate.css',
+        'inject_animate_desc' => 'Inject animation css styles',
     ],
 ];

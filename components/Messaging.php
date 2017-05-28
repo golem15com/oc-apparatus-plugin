@@ -31,15 +31,45 @@ class Messaging extends ComponentBase
             'description' => 'Provides Apparatus Messaging functionality'
         ];
     }
+    
+    public function defineProperties(){
 
+        return [
+            'injectMain' => [
+                'title'       => 'keios.apparatus::lang.strings.inject_main',
+                'description' => 'keios.apparatus::lang.strings.inject_main_desc',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'injectNoty' => [
+                'title'       => 'keios.apparatus::lang.strings.inject_noty',
+                'description' => 'keios.apparatus::lang.strings.inject_noty_desc',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
+            'injectAnimate' => [
+                'title'       => 'keios.apparatus::lang.strings.inject_animate',
+                'description' => 'keios.apparatus::lang.strings.inject_animate_desc',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ]
+        ];
+    }
+    
     /**
      * Component onRun method
      */
     public function onRun()
     {
-        $this->addCss('/plugins/keios/apparatus/assets/css/animate.css');
-        $this->addJs('/plugins/keios/apparatus/assets/js/noty/packaged/jquery.noty.packaged.min.js');
-        $this->addJs('/plugins/keios/apparatus/assets/js/framework.messaging.js');
+        if($this->property('injectAnimate')) {
+            $this->addCss('/plugins/keios/apparatus/assets/css/animate.min.css');
+        }
+        if($this->property('injectNoty')) {
+            $this->addJs('/plugins/keios/apparatus/assets/js/noty/packaged/jquery.noty.packaged.min.js');
+        }
+        if($this->property('injectMain')) {
+            $this->addJs('/plugins/keios/apparatus/assets/js/framework.messaging.min.js');
+        }
 
         $settings = Settings::instance()->value;
 
