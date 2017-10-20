@@ -2,6 +2,7 @@
 
 use Illuminate\Contracts\Container\Container;
 use Keios\Apparatus\Contracts\NeedsDependencies;
+use October\Rain\Exception\ApplicationException;
 
 /**
  * Class DependencyInjector
@@ -42,7 +43,12 @@ class DependencyInjector
 
         foreach ($methods as $method) {
             if (strpos($method, 'inject') === 0) {
-                $this->container->call([$object, $method]);
+                try {
+                    $this->container->call([$object, $method]);
+                } catch(\Exception $e){
+                    $msg = $e->getMessage() . ' at class: '. get_class($object);
+                    throw new \ApplicationException($msg);
+                }
             }
         }
     }
