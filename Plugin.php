@@ -6,6 +6,8 @@ use Keios\Apparatus\Classes\BackendInjector;
 use Keios\Apparatus\Classes\DependencyInjector;
 use Keios\Apparatus\Classes\RouteResolver;
 use Keios\Apparatus\Console\Optimize;
+use Morrislaptop\LaravelQueueClear\Console\QueueClearCommand;
+use Morrislaptop\LaravelQueueClear\LaravelQueueClearServiceProvider;
 use System\Classes\PluginBase;
 use Keios\LaravelApparatus\LaravelApparatusServiceProvider;
 use October\Rain\Translation\Translator;
@@ -78,9 +80,11 @@ class Plugin extends PluginBase
      */
     public function register()
     {
+        $this->app->register(LaravelQueueClearServiceProvider::class);
         $this->commands(
             [
-                Optimize::class
+                Optimize::class,
+                QueueClearCommand::class
             ]
         );
 
