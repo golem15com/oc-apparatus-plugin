@@ -1,0 +1,142 @@
+<?php Block::put('breadcrumb') ?>
+<ul>
+    <li><a href="<?= Backend::url('keios/apparatus/jobs') ?>">Jobs</a></li>
+    <li><?= e($this->pageTitle) ?></li>
+</ul>
+<?php Block::endPut() ?>
+
+<?php if (!$this->fatalError): ?>
+
+<?= Form::open(['class' => 'layout']) ?>
+
+<div class="layout-row">
+    <div class="scoreboard">
+        <div data-control="toolbar">
+            <div class="scoreboard-item title-value">
+                <h4>Job ID</h4>
+                <p><?= $job->id ?></p>
+            </div>
+
+            <div class="scoreboard-item title-value">
+                <h4>Job</h4>
+                <p><?= $job->label ?></p>
+            </div>
+
+            <div class="scoreboard-item title-value">
+                <h4>Status</h4>
+                <?php if ($job->status == \Keios\Apparatus\Contracts\JobStatus::ERROR): ?>
+                <p data-job-id="<?= $job->id ?>" data-job-status="<?= $job->status ?>" class="danger"><?= $job->
+                    getStatus() ?></p>
+                <?php elseif ($job->status == \Keios\Apparatus\Contracts\JobStatus::COMPLETE): ?>
+                <p data-job-id="<?= $job->id ?>" data-job-status="<?= $job->status ?>" class="success"><?= $job->
+                    getStatus() ?></p>
+                <?php else: ?>
+                <p data-job-id="<?= $job->id ?>" data-job-status="<?= $job->status ?>"><?= $job->getStatus() ?></p>
+                <?php endif; ?>
+            </div>
+
+            <?php if ($job->status == \Keios\Apparatus\Contracts\JobStatus::ERROR && array_key_exists('error', $job->metadata)): ?>
+            <div class="scoreboard-item title-value">
+                <h4>Error</h4>
+                <p data-job-error class="error-content danger"><?= $job->metadata['error'] ?></p>
+            </div>
+            <?php endif; ?>
+
+            <div class="scoreboard-item title-value pull-right">
+                <h4>Created at</h4>
+                <p><?= $job->created_at ?></p>
+                <p class="description">Last update: <?= $job->updated_at ?></p>
+            </div>
+        </div>
+    </div>
+
+    <div id="progress-container" class="hidden">
+        <div class="progress" style="background-color: #d9dee0; height: 9px">
+            <div class="progress-bar"
+                 role="progressbar"
+                 data-job-progress="<?= $job->id ?>"
+                 aria-valuenow="<?= $job->progress ?>"
+                 aria-valuemin="0"
+                 aria-valuemax="<?= $job->progress_max ?>"
+                 style="height: 9px; width: <?= $job->progressPercent() ?>%;">
+            </div>
+        </div>
+        <div class="text-center">
+            <span data-job-progress-text="<?= $job->id ?>">
+                <?= $job->progressPercent() ?>
+            </span>
+            <span>% Complete</span>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <h4>Metadata</h4>
+        <table class="table">
+            <thead>
+            <tr>
+                <td style="width: 180px;">Key</td>
+                <td>Value</td>
+            </tr>
+            </thead>
+            <tbody>
+            <?php foreach($job->metadata as $key => $value) { ?>
+            <tr>
+                <td><?= $key ?></td>
+                <?php if(str_contains($value, 'http')) { ?>
+                <td><a href="<?= $value ?>"><?= $value ?></a></td>
+                <?php } else { ?>
+                <td><?= $value ?></td>
+                <?php } ?>
+            </tr>
+            <?php } ?>
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+
+<div class="form-buttons">
+    <div class="loading-indicator-container">
+        <?php if ($this->isSuperUser() && $job->canBeCanceled()): ?>
+        <a
+                id="job-force-cancel-btn"
+                type="button"
+                data-request="onForceCancelJob"
+                data-request-data="id:<?= $job->id ?>"
+                data-load-indicator="Force canceling Job..."
+                class="btn btn-danger">
+            Force cancel job
+        </a>
+        <?php endif ?>
+        <?php if ($job->canBeCanceled()): ?>
+        <a
+                id="job-cancel-btn"
+                type="button"
+                data-request="onCancelJob"
+                data-request-data="id:<?= $job->id ?>"
+                data-load-indicator="Canceling Job..."
+                class="btn btn-danger">
+            Cancel this job
+        </a>
+        <?php endif; ?>
+        <a class="btn btn-default" href="<?= Backend::url('pixelpixel/mplibrary/jobs') ?>">Return to job list</a>
+    </div>
+</div>
+
+<?= Form::close() ?>
+
+<?php else: ?>
+
+<p class="flash-message static error"><?= e($this->fatalError) ?></p>
+<p><a href="<?= Backend::url('pixelpixel/mplibrary/jobs') ?>" class="btn btn-default">Return to jobs list</a></p>
+
+<?php endif ?>
+
+<style>
+    .title-value p.error-content {
+        font-weight: 300;
+        line-height: 100%;
+        font-size: 15px;
+        margin-top: 12px;
+    }
+</style>

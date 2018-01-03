@@ -1,0 +1,10 @@
+<div class="progress">
+    <div class="progress-bar" role="progressbar"
+         aria-valuenow="<?= $model->progress ?>"
+         data-job-progress="<?= $model->id ?>"
+         aria-valuemin="0"
+         aria-valuemax="<?= $model->progress_max ?>"
+         style="width: <?= $model->progressPercent() ?>%">
+        <span class="sr-only"><?= $model->progressPercent() ?> Complete</span>
+    </div>
+</div>

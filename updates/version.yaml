@@ -2,3 +2,6 @@
     - First version of Apparatus
 1.0.2:
     - Optimize command
+1.0.3:
+    - Queue Jobs support
+    - create_jobs_table.php

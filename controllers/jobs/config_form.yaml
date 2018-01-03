@@ -1,0 +1,31 @@
+# ===================================
+#  Form Behavior Config
+# ===================================
+
+# Record name
+name: keios.apparatus::lang.job.label
+
+# Model Form Field configuration
+form: $/keios/apparatus/models/job/fields.yaml
+
+# Model Class name
+modelClass: Keios\Apparatus\Models\Job
+
+# Default redirect location
+defaultRedirect: keios/apparatus/jobs
+
+# Create page
+create:
+    title: keios.apparatus::lang.job.create_title
+    redirect: keios/apparatus/jobs/update/:id
+    redirectClose: keios/apparatus/jobs
+
+# Update page
+update:
+    title: keios.apparatus::lang.job.update_title
+    redirect: keios/apparatus/jobs
+    redirectClose: keios/apparatus/jobs
+
+# Preview page
+preview:
+    title: keios.apparatus::lang.job.preview_title

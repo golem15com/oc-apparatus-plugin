@@ -1,0 +1,14 @@
+# ===================================
+#  Form Field Definitions
+# ===================================
+
+fields:
+    label:
+        label: Label
+        disabled: true
+    status:
+        label:
+        type: partial
+    progress:
+        label: Progress
+        type: partial

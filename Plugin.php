@@ -1,5 +1,6 @@
 <?php namespace Keios\Apparatus;
 
+use Backend;
 use Cms\Classes\ComponentBase;
 use Illuminate\Foundation\AliasLoader;
 use Keios\Apparatus\Classes\BackendInjector;
@@ -27,7 +28,7 @@ class Plugin extends PluginBase
             'name'        => 'Apparatus',
             'description' => 'keios.apparatus::lang.labels.pluginName',
             'author'      => 'Keios',
-            'icon'        => 'icon-cogs'
+            'icon'        => 'icon-cogs',
         ];
     }
 
@@ -37,7 +38,7 @@ class Plugin extends PluginBase
     public function registerComponents()
     {
         return [
-            Components\Messaging::class => 'apparatusFlashMessages'
+            Components\Messaging::class => 'apparatusFlashMessages',
         ];
     }
 
@@ -50,6 +51,32 @@ class Plugin extends PluginBase
             'keios.apparatus.access_settings' => [
                 'tab'   => 'keios.apparatus::lang.permissions.tab',
                 'label' => 'keios.apparatus::lang.permissions.access_settings',
+            ],
+            'keios.apparatus.access_jobs'     => [
+                'tab'   => 'keios.apparatus::lang.permissions.tab',
+                'label' => 'keios.apparatus::lang.permissions.access_jobs',
+            ],
+        ];
+    }
+
+    public function registerNavigation(): array
+    {
+        return [
+            'apparatus' => [
+                'label'       => 'keios.apparatus::lang.labels.jobs',
+                'url'         => Backend::url('keios/apparatus/jobs'),
+                'icon'        => 'icon-gears',
+                'iconSvg'     => 'plugins/keios/apparatus/assets/img/gear.svg',
+                'order'       => 500,
+                'permissions' => ['keios.apparatus.*'],
+                'sideMenu'    => [
+                    'jobs' => [
+                        'label'       => 'keios.apparatus::lang.labels.jobs',
+                        'icon'        => 'icon-gears',
+                        'url'         => Backend::url('keios/apparatus/jobs'),
+                        'permissions' => ['keios.apparatus.access_jobs'],
+                    ],
+                ],
             ],
         ];
     }
@@ -68,8 +95,8 @@ class Plugin extends PluginBase
                 'class'       => Models\Settings::class,
                 'permissions' => ['keios.apparatus.access_settings'],
                 'order'       => 500,
-                'keywords'    => 'messages flash notifications'
-            ]
+                'keywords'    => 'messages flash notifications',
+            ],
         ];
     }
 
@@ -80,7 +107,7 @@ class Plugin extends PluginBase
     {
         $this->commands(
             [
-                Optimize::class
+                Optimize::class,
             ]
         );
 
@@ -92,7 +119,7 @@ class Plugin extends PluginBase
                 return new RouteResolver($this->app['config'], $this->app['log']);
             }
         );
-        
+
         $this->app->singleton(
             'apparatus.backend.injector',
             function () {
