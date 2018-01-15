@@ -18,7 +18,7 @@ class RouteResolver
     protected $theme;
 
     /**
-     * @var array
+     * @var Page[]
      */
     protected $pages;
 

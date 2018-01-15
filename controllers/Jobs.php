@@ -3,9 +3,12 @@
 use BackendMenu;
 use Backend\Classes\Controller;
 use Flash;
+use Illuminate\Http\RedirectResponse;
 use Keios\Apparatus\Contracts\JobStatus;
 use Lang;
 use Keios\Apparatus\Models\Job;
+use Redirect;
+use Request;
 
 /**
  * Jobs Back-end Controller
@@ -132,7 +135,7 @@ class Jobs extends Controller
     }
 
     /**
-     * @return Redirect
+     * @return RedirectResponse
      */
     public function onForceCancelJob()
     {
