@@ -35,7 +35,8 @@
                 <?php endif; ?>
             </div>
 
-            <?php if ($job->status == \Keios\Apparatus\Contracts\JobStatus::ERROR && array_key_exists('error', $job->metadata)): ?>
+            <?php if ($job->status == \Keios\Apparatus\Contracts\JobStatus::ERROR && array_key_exists('error',
+            $job->metadata)): ?>
             <div class="scoreboard-item title-value">
                 <h4>Error</h4>
                 <p data-job-error class="error-content danger"><?= $job->metadata['error'] ?></p>
@@ -119,7 +120,6 @@
             Cancel this job
         </a>
         <?php endif; ?>
-        <a class="btn btn-default" href="<?= Backend::url('pixelpixel/mplibrary/jobs') ?>">Return to job list</a>
     </div>
 </div>
 
@@ -128,7 +128,6 @@
 <?php else: ?>
 
 <p class="flash-message static error"><?= e($this->fatalError) ?></p>
-<p><a href="<?= Backend::url('pixelpixel/mplibrary/jobs') ?>" class="btn btn-default">Return to jobs list</a></p>
 
 <?php endif ?>
 

@@ -84,6 +84,7 @@ class RouteResolver
      * @param string $component
      *
      * @return array|Page|null
+     * @throws \ApplicationException
      * @throws \Exception
      */
     public function resolveRouteTo($component)
@@ -100,7 +101,7 @@ class RouteResolver
      *
      * @return string
      */
-    public function stripUrlParameters($url)
+    public function stripUrlParameters($url): string
     {
         if (strpos($url, '/:') !== false) {
             $parts = explode('/:', $url);
@@ -115,9 +116,10 @@ class RouteResolver
      * @param string $component
      *
      * @return string
+     * @throws \ApplicationException
      * @throws \Exception
      */
-    public function resolveRouteWithoutParamsTo($component)
+    public function resolveRouteWithoutParamsTo($component): string
     {
         $page = $this->getPageWithComponent($component);
 

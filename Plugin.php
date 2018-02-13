@@ -24,7 +24,7 @@ class Plugin extends PluginBase
      *
      * @return array
      */
-    public function pluginDetails()
+    public function pluginDetails(): array
     {
         return [
             'name'        => 'Apparatus',
@@ -37,7 +37,7 @@ class Plugin extends PluginBase
     /**
      * @return array
      */
-    public function registerComponents()
+    public function registerComponents(): array
     {
         return [
             Components\Messaging::class => 'apparatusFlashMessages',
@@ -47,7 +47,7 @@ class Plugin extends PluginBase
     /**
      * @return array
      */
-    public function registerPermissions()
+    public function registerPermissions(): array
     {
         return [
             'keios.apparatus.access_settings' => [
@@ -86,7 +86,7 @@ class Plugin extends PluginBase
     /**
      * @return array
      */
-    public function registerSettings()
+    public function registerSettings(): array
     {
         return [
             'messaging' => [

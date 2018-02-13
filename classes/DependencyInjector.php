@@ -28,6 +28,7 @@ class DependencyInjector
 
     /**
      * @param $object
+     * @throws \ApplicationException
      */
     public function injectDependencies($object)
     {

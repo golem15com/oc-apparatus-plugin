@@ -42,12 +42,14 @@ class Job extends Model
         return trans('keios.apparatus::lang.jobs.unknown');
     }
 
-    public function progressPercent(){
+    public function progressPercent(): float
+    {
 
         return round(($this->progress * 100) / $this->progress_max);
     }
 
-    public function canBeCanceled(){
+    public function canBeCanceled(): bool
+    {
         return in_array($this->status, [0,1], true);
     }
 }

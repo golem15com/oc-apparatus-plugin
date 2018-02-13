@@ -52,7 +52,7 @@ class JobManager
      * @return int
      * @internal param int $type
      */
-    public function dispatch(ApparatusQueueJob $job, string $label, array $parameters = [])
+    public function dispatch(ApparatusQueueJob $job, string $label, array $parameters = []): int
     {
         $isAdmin = false;
         $userId = null;
@@ -176,7 +176,7 @@ class JobManager
      *
      * @return array
      */
-    public function getMetadata(int $id)
+    public function getMetadata(int $id): array
     {
         $json = $this->db->table(self::JOB_TABLE)->where('id', $id)->select('metadata')->first()->metadata;
 

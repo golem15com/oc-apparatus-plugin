@@ -24,7 +24,7 @@ class Messaging extends ComponentBase
     /**
      * @return array
      */
-    public function componentDetails()
+    public function componentDetails(): array
     {
         return [
             'name' => 'Apparatus Messaging',
@@ -32,7 +32,8 @@ class Messaging extends ComponentBase
         ];
     }
     
-    public function defineProperties(){
+    public function defineProperties(): array
+    {
 
         return [
             'injectMain' => [

@@ -17,7 +17,7 @@ class Jobs extends Controller
 {
     public $implement = [
         'Backend.Behaviors.FormController',
-        'Backend.Behaviors.ListController'
+        'Backend.Behaviors.ListController',
     ];
 
     public $formConfig = 'config_form.yaml';
@@ -60,8 +60,10 @@ class Jobs extends Controller
         }
     }
 
-    public function isSuperuser(){
+    public function isSuperuser()
+    {
         $user = \BackendAuth::getUser();
+
         return $user->is_superuser;
     }
 
@@ -73,13 +75,14 @@ class Jobs extends Controller
         if (($checkedIds = post('checked')) && is_array($checkedIds) && count($checkedIds)) {
 
             foreach ($checkedIds as $jobId) {
-                if (!$job = Job::find($jobId)) continue;
+                if (!$job = Job::find($jobId)) {
+                    continue;
+                }
                 $job->delete();
             }
 
             Flash::success(Lang::get('keios.apparatus::lang.jobs.delete_selected_success'));
-        }
-        else {
+        } else {
             Flash::error(Lang::get('keios.apparatus::lang.jobs.delete_selected_empty'));
         }
 
@@ -137,7 +140,7 @@ class Jobs extends Controller
     /**
      * @return RedirectResponse
      */
-    public function onForceCancelJob()
+    public function onForceCancelJob(): \Illuminate\Http\RedirectResponse
     {
         $id = post('id');
 

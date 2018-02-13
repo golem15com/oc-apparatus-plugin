@@ -35,7 +35,7 @@ class Settings extends Model
     /**
      * @return array
      */
-    public function listAnimations()
+    public function listAnimations(): array
     {
         return [
             ''                            => 'none',
@@ -118,7 +118,7 @@ class Settings extends Model
     /**
      * @return array
      */
-    public function getOpenAnimationOptions()
+    public function getOpenAnimationOptions(): array
     {
         return $this->listAnimations();
     }
@@ -126,7 +126,7 @@ class Settings extends Model
     /**
      * @return array
      */
-    public function getCloseAnimationOptions()
+    public function getCloseAnimationOptions(): array
     {
         return $this->listAnimations();
     }
@@ -134,7 +134,7 @@ class Settings extends Model
     /**
      * @return array
      */
-    public function getLayoutOptions()
+    public function getLayoutOptions(): array
     {
         return [
             'top'          => 'top',

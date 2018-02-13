@@ -61,7 +61,7 @@ class Optimize extends Command
     /**
      * Get the console command arguments.
      */
-    protected function getArguments()
+    protected function getArguments(): array
     {
         return [];
     }
@@ -69,7 +69,7 @@ class Optimize extends Command
     /**
      * Get the console command options.
      */
-    protected function getOptions()
+    protected function getOptions(): array
     {
         return [];
     }
