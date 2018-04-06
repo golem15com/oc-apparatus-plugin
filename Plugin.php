@@ -1,12 +1,16 @@
 <?php namespace Keios\Apparatus;
 
 use Backend;
+use Backend\Classes\Controller;
 use Cms\Classes\ComponentBase;
+use Event;
+use Flash;
 use Illuminate\Foundation\AliasLoader;
 use Keios\Apparatus\Classes\BackendInjector;
 use Keios\Apparatus\Classes\DependencyInjector;
 use Keios\Apparatus\Classes\RouteResolver;
 use Keios\Apparatus\Console\Optimize;
+use Keios\Apparatus\FormWidgets\ListToggle;
 use Morrislaptop\LaravelQueueClear\Console\QueueClearCommand;
 use Morrislaptop\LaravelQueueClear\LaravelQueueClearServiceProvider;
 use System\Classes\PluginBase;
@@ -111,7 +115,7 @@ class Plugin extends PluginBase
         $this->commands(
             [
                 Optimize::class,
-                QueueClearCommand::class
+                QueueClearCommand::class,
             ]
         );
 
@@ -137,6 +141,13 @@ class Plugin extends PluginBase
                 return new DependencyInjector($this->app);
             }
         );
+    }
+
+    public function registerListColumnTypes()
+    {
+        return [
+            'listtoggle' => [ListToggle::class, 'render'],
+        ];
     }
 
     /**
@@ -170,6 +181,49 @@ class Plugin extends PluginBase
 
         $injector = $this->app->make('apparatus.backend.injector');
         $injector->addCss('/plugins/keios/apparatus/assets/css/animate.css');
+
+        Event::listen('backend.list.extendColumns', function ($widget) {
+            foreach ($widget->config->columns as $name => $config) {
+                if (empty($config['type']) || $config['type'] !== 'listtoggle') {
+                    continue;
+                }
+                // Store field config here, before that unofficial fields was removed
+                ListToggle::storeFieldConfig($name, $config);
+                $column = [
+                    'clickable' => false,
+                    'type'      => 'listtoggle'
+                ];
+                if (isset($config['label'])) {
+                    $column['label'] = $config['label'];
+                }
+                // Set this column not clickable
+                // if other column with same field name exists configs are merged
+                $widget->addColumns([
+                    $name => $column
+                ]);
+            }
+        });
+        /**
+         * Switch a boolean value of a model field
+         * @return void
+         */
+        Controller::extend(function ($controller) {
+            $controller->addDynamicMethod('index_onSwitchInetisListField', function () use ($controller) {
+                $field = post('field');
+                $id = post('id');
+                $modelClass = post('model');
+                if (empty($field) || empty($id) || empty($modelClass)) {
+                    Flash::error('Following parameters are required : id, field, model');
+                    return null;
+                }
+                $model = new $modelClass;
+                $item = $model::find($id);
+                $item->{$field} = !$item->{$field};
+                $item->save();
+                return $controller->listRefresh($controller->primaryDefinition);
+            });
+        });
+
     }
 
 }
