@@ -44,7 +44,9 @@ class Job extends Model
 
     public function progressPercent(): float
     {
-
+        if((int)$this->progress_max === 0){
+           $this->progress_max = 1;
+        }
         return round(($this->progress * 100) / $this->progress_max);
     }
 
