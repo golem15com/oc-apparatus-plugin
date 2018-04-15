@@ -96,7 +96,7 @@ class JobManager
      * @param int $id
      * @param int $totalItems
      */
-    public function startJob(int $id, int $totalItems)
+    public function startJob(int $id, int $totalItems): void
     {
         $now = Carbon::now()->toDateTimeString();
         $this->db->table(self::JOB_TABLE)->where('id', $id)->update(

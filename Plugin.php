@@ -72,7 +72,7 @@ class Plugin extends PluginBase
     {
         return [
             'apparatus' => [
-                'label'       => 'keios.apparatus::lang.labels.jobs',
+                'label'       => 'keios.apparatus::lang.labels.apparatus',
                 'url'         => Backend::url('keios/apparatus/jobs'),
                 'icon'        => 'icon-gears',
                 'iconSvg'     => 'plugins/keios/apparatus/assets/img/gear.svg',

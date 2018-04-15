@@ -4,6 +4,7 @@ return [
     'labels'      => [
         'pluginName' => 'Business logic scenario processor',
         'jobs'       => 'Jobs',
+        'apparatus'  => 'Apparatus',
     ],
     'errors'      => [
         'pageWithComponentNotFound' => 'Component %s is not bound to any page in CMS.',
@@ -59,5 +60,11 @@ return [
         'error'                   => 'Crashed',
         'stopped'                 => 'Stopped',
         'unknown'                 => 'Unknown',
+    ],
+    'listtoggle'  => [
+        'title_true'  => 'Yes',
+        'title_false' => 'No',
+        'text_true'   => 'Enabled',
+        'text_false'  => 'Disabled',
     ],
 ];
