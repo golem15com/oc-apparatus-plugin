@@ -1,6 +1,5 @@
 <?php namespace Keios\Apparatus\Models;
 
-use Keios\Apparatus\Classes\QueueJob;
 use Model;
 
 /**

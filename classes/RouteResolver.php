@@ -4,6 +4,7 @@ use Illuminate\Contracts\Logging\Log;
 use Illuminate\Contracts\Config\Repository;
 use Cms\Classes\Theme;
 use Cms\Classes\Page;
+use October\Rain\Exception\ApplicationException;
 
 /**
  * Class RouteResolver
@@ -208,12 +209,12 @@ class RouteResolver
      * @param string $parameter
      * @param string $component
      *
-     * @throws \ApplicationException
+     * @throws ApplicationException
      */
     protected function parameterNotFound(string $parameter, string $component): void
     {
         if ($this->config->get('app.debug')) {
-            throw new \ApplicationException(
+            throw new ApplicationException(
                 sprintf(trans('keios.apparatus::lang.errors.parameterNotFound'), $parameter, $component)
             );
         }

@@ -1,6 +1,5 @@
 <?php namespace Keios\Apparatus\Facades;
 
-
 use October\Rain\Support\Facade;
 
 /**

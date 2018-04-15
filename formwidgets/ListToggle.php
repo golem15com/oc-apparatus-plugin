@@ -82,10 +82,10 @@ class ListToggle
     }
 
     /**
-     * @param null $config
+     * @param null|string $config
      * @return mixed
      */
-    private function getConfig($config = null)
+    private function getConfig(?string $config = null)
     {
         if (null === $config) {
             return self::$listConfig[$this->name];
@@ -99,14 +99,14 @@ class ListToggle
      */
     public function getRequestData(): string
     {
-        $modelClass = str_replace('\\', '\\\\', get_class($this->record));
+        $modelClass = str_replace('\\', '\\\\', \get_class($this->record));
         $data = [
             "id: {$this->record->{$this->record->getKeyName()}}",
             "field: '$this->name'",
             "model: '$modelClass'",
         ];
         if (post('page')) {
-            $data[] = "page: ".post('page');
+            $data[] = 'page: '.post('page');
         }
 
         return implode(', ', $data);

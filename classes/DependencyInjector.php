@@ -27,8 +27,8 @@ class DependencyInjector
     }
 
     /**
-     * @param $object
-     * @throws \ApplicationException
+     * @param object $object
+     * @throws ApplicationException
      */
     public function injectDependencies(object $object)
     {
@@ -42,7 +42,7 @@ class DependencyInjector
                     $this->container->call([$object, $method]);
                 } catch(\Exception $e){
                     $msg = $e->getMessage() . ' at class: '. \get_class($object);
-                    throw new \ApplicationException($msg);
+                    throw new ApplicationException($msg);
                 }
             }
         }

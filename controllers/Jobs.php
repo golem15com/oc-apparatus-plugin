@@ -84,7 +84,7 @@ class Jobs extends Controller
      */
     public function index_onDelete(): array
     {
-        if (($checkedIds = post('checked')) && is_array($checkedIds) && count($checkedIds)) {
+        if (($checkedIds = post('checked')) && \is_array($checkedIds) && \count($checkedIds)) {
 
             foreach ($checkedIds as $jobId) {
                 if (!$job = Job::find($jobId)) {
@@ -152,7 +152,7 @@ class Jobs extends Controller
     /**
      * @return RedirectResponse
      */
-    public function onForceCancelJob(): \Illuminate\Http\RedirectResponse
+    public function onForceCancelJob(): RedirectResponse
     {
         $id = post('id');
 
