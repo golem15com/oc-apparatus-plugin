@@ -44,19 +44,17 @@ class TranslApiController extends Controller
      * @return RedirectResponse|JsonResponse
      * @throws \InvalidArgumentException
      */
-    public function getTranslations(Request $request)
+    public function getTranslations(Request $request): JsonResponse
     {
         $data = $request->request->all();
 
         if (!isset($data['keys'])) {
-            return new RedirectResponse('/404');
+            return new JsonResponse(['error' => 'Not Found'], 404);
         }
 
         $translations = [];
 
-        $keysToTranslate = $data['keys'];
-
-        foreach ($keysToTranslate as $key) {
+        foreach ($data['keys'] as $key) {
             $translations[$key] = $this->translator->get($key);
         }
 

@@ -65,6 +65,9 @@ class Plugin extends PluginBase
         ];
     }
 
+    /**
+     * @return array
+     */
     public function registerNavigation(): array
     {
         return [
@@ -109,7 +112,7 @@ class Plugin extends PluginBase
     /**
      * Plugin register method
      */
-    public function register()
+    public function register(): void
     {
         $this->app->register(LaravelQueueClearServiceProvider::class);
         $this->commands(
@@ -143,7 +146,10 @@ class Plugin extends PluginBase
         );
     }
 
-    public function registerListColumnTypes()
+    /**
+     * @return array
+     */
+    public function registerListColumnTypes(): array
     {
         return [
             'listtoggle' => [ListToggle::class, 'render'],
@@ -152,8 +158,9 @@ class Plugin extends PluginBase
 
     /**
      * Plugin boot method
+     * @throws \ApplicationException
      */
-    public function boot()
+    public function boot(): void
     {
         $translator = $this->app->make('translator');
 
@@ -182,48 +189,59 @@ class Plugin extends PluginBase
         $injector = $this->app->make('apparatus.backend.injector');
         $injector->addCss('/plugins/keios/apparatus/assets/css/animate.css');
 
-        Event::listen('backend.list.extendColumns', function ($widget) {
-            foreach ($widget->config->columns as $name => $config) {
-                if (empty($config['type']) || $config['type'] !== 'listtoggle') {
-                    continue;
+        Event::listen(
+            'backend.list.extendColumns',
+            function ($widget) {
+                foreach ($widget->config->columns as $name => $config) {
+                    if (empty($config['type']) || $config['type'] !== 'listtoggle') {
+                        continue;
+                    }
+                    // Store field config here, before that unofficial fields was removed
+                    ListToggle::storeFieldConfig($name, $config);
+                    $column = [
+                        'clickable' => false,
+                        'type'      => 'listtoggle',
+                    ];
+                    if (isset($config['label'])) {
+                        $column['label'] = $config['label'];
+                    }
+                    // Set this column not clickable
+                    // if other column with same field name exists configs are merged
+                    $widget->addColumns(
+                        [
+                            $name => $column,
+                        ]
+                    );
                 }
-                // Store field config here, before that unofficial fields was removed
-                ListToggle::storeFieldConfig($name, $config);
-                $column = [
-                    'clickable' => false,
-                    'type'      => 'listtoggle'
-                ];
-                if (isset($config['label'])) {
-                    $column['label'] = $config['label'];
-                }
-                // Set this column not clickable
-                // if other column with same field name exists configs are merged
-                $widget->addColumns([
-                    $name => $column
-                ]);
             }
-        });
+        );
         /**
          * Switch a boolean value of a model field
          * @return void
          */
-        Controller::extend(function ($controller) {
-            $controller->addDynamicMethod('index_onSwitchInetisListField', function () use ($controller) {
-                $field = post('field');
-                $id = post('id');
-                $modelClass = post('model');
-                if (empty($field) || empty($id) || empty($modelClass)) {
-                    Flash::error('Following parameters are required : id, field, model');
-                    return null;
-                }
-                $model = new $modelClass;
-                $item = $model::find($id);
-                $item->{$field} = !$item->{$field};
-                $item->save();
-                return $controller->listRefresh($controller->primaryDefinition);
-            });
-        });
+        Controller::extend(
+            function ($controller) {
+                $controller->addDynamicMethod(
+                    'index_onSwitchInetisListField',
+                    function () use ($controller) {
+                        $field = post('field');
+                        $id = post('id');
+                        $modelClass = post('model');
+                        if (empty($field) || empty($id) || empty($modelClass)) {
+                            Flash::error('Following parameters are required : id, field, model');
 
+                            return null;
+                        }
+                        $model = new $modelClass;
+                        $item = $model::find($id);
+                        $item->{$field} = !$item->{$field};
+                        $item->save();
+
+                        return $controller->listRefresh($controller->primaryDefinition);
+                    }
+                );
+            }
+        );
     }
 
 }

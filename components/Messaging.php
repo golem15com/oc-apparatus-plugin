@@ -60,7 +60,7 @@ class Messaging extends ComponentBase
     /**
      * Component onRun method
      */
-    public function onRun()
+    public function onRun(): void
     {
         if($this->property('injectAnimate')) {
             $this->addCss('/plugins/keios/apparatus/assets/css/animate.min.css');
@@ -74,7 +74,7 @@ class Messaging extends ComponentBase
 
         $settings = Settings::instance()->value;
 
-        if (!is_array($settings)) {
+        if (!\is_array($settings)) {
             return;
         }
 

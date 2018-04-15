@@ -10,7 +10,6 @@ namespace Keios\Apparatus\Classes;
 
 use Keios\Apparatus\Contracts\ApparatusQueueJob;
 use Keios\Apparatus\Contracts\JobStatus;
-use Keios\Apparatus\Models\Job;
 use Carbon\Carbon;
 use Illuminate\Contracts\Queue\Queue;
 use Illuminate\Database\Connection;
@@ -34,6 +33,12 @@ class JobManager
     private $queue;
 
     /**
+     * This flag will remove successfully completed  DB to not clutter controller
+     * @var bool
+     */
+    private $simpleJob = false;
+
+    /**
      * JobManager constructor.
      *
      * @param Connection $db
@@ -50,19 +55,16 @@ class JobManager
      * @param string            $label
      * @param array             $parameters
      * @return int
-     * @internal param int $type
      */
     public function dispatch(ApparatusQueueJob $job, string $label, array $parameters = []): int
     {
         $isAdmin = false;
         $userId = null;
-        $user = \Auth::getUser();
-        if ($user) {
+        if ($user = \Auth::getUser()) {
             $userId = $user->id;
             $isAdmin = false;
         }
-        $user = \BackendAuth::getUser();
-        if ($user) {
+        if ($user = \BackendAuth::getUser()) {
             $userId = $user->id;
             $isAdmin = true;
         }
@@ -77,7 +79,6 @@ class JobManager
             'is_admin'     => $isAdmin,
             'progress'     => 0,
             'progress_max' => $count,
-
             'metadata'   => json_encode($metadata),
             'updated_at' => $now,
             'created_at' => $now,
@@ -111,7 +112,7 @@ class JobManager
      * @param int $id
      * @param int $currentItem
      */
-    public function updateJobState(int $id, $currentItem)
+    public function updateJobState(int $id, int $currentItem): void
     {
         $this->db->table(self::JOB_TABLE)->where('id', $id)->update(
             [
@@ -124,7 +125,7 @@ class JobManager
      * @param int   $id JobID
      * @param array $metadata
      */
-    public function updateMetadata(int $id, array $metadata)
+    public function updateMetadata(int $id, array $metadata): void
     {
         $this->db->table(self::JOB_TABLE)->where('id', $id)->update(
             [
@@ -137,15 +138,21 @@ class JobManager
      * @param int   $id
      * @param array $metadata
      */
-    public function completeJob(int $id, array $metadata = [])
+    public function completeJob(int $id, array $metadata = []): void
     {
+        $maxProgress = 1;
         $totalItems = $this->db->table(self::JOB_TABLE)->where('id', $id)->first(['progress_max']);
+        if ($totalItems) {
+            $maxProgress = $totalItems->progress_max;
+        }
         $entry = $this->db->table(self::JOB_TABLE)->where('id', $id);
-        if ($metadata) {
+        if ($this->isSimpleJob()) {
+            $entry->delete();
+        } elseif ($metadata) {
             $entry->update(
                 [
                     'status'   => JobStatus::COMPLETE,
-                    'progress' => $totalItems->progress_max,
+                    'progress' => $maxProgress,
                     'metadata' => json_encode($metadata),
                 ]
             );
@@ -153,7 +160,7 @@ class JobManager
             $entry->update(
                 [
                     'status'   => JobStatus::COMPLETE,
-                    'progress' => $totalItems->progress_max,
+                    'progress' => $maxProgress,
                 ]
             );
         }
@@ -187,7 +194,7 @@ class JobManager
      * @param int   $id
      * @param array $metadata
      */
-    public function failJob(int $id, array $metadata = [])
+    public function failJob(int $id, array $metadata = []): void
     {
         $toUpdate = [
             'status' => JobStatus::ERROR,
@@ -204,7 +211,7 @@ class JobManager
      * @param int   $id
      * @param array $metadata
      */
-    public function cancelJob(int $id, array $metadata = [])
+    public function cancelJob(int $id, array $metadata = []): void
     {
         $toUpdate = [
             'status' => JobStatus::STOPPED,
@@ -215,6 +222,22 @@ class JobManager
         $this->db->table(self::JOB_TABLE)->where('id', $id)->update(
             $toUpdate
         );
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSimpleJob(): bool
+    {
+        return $this->simpleJob;
+    }
+
+    /**
+     * @param bool $simpleJob
+     */
+    public function setSimpleJob(bool $simpleJob): void
+    {
+        $this->simpleJob = $simpleJob;
     }
 
 }

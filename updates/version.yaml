@@ -5,3 +5,8 @@
 1.0.3:
     - Queue Jobs support
     - create_jobs_table.php
+1.1.0:
+    - Full type safety
+    - PHP requirement increased to 7.1
+    - Code tuneup
+    - List switch replacement

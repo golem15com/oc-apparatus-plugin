@@ -25,6 +25,7 @@ class ListToggle
         'textTrue'   => 'keios.apparatus::lang.listtoggle.text_true',
         'textFalse'  => 'keios.apparatus::lang.listtoggle.text_false',
         'request'    => 'onSwitchInetisListField',
+        'readOnly'   => false,
     ];
 
     /**
@@ -36,21 +37,24 @@ class ListToggle
      * @param string $field
      * @param array  $config
      */
-    public static function storeFieldConfig(string $field, array $config)
+    public static function storeFieldConfig(string $field, array $config): void
     {
         self::$listConfig[$field] = array_merge(self::$defaultFieldConfig, $config, ['name' => $field]);
     }
 
     /**
-     * @param            $value
+     * @param string     $value
      * @param ListColumn $column
      * @param Model      $record
      * @return string
      */
-    public static function render($value, ListColumn $column, Model $record)
+    public static function render(string $value, ListColumn $column, Model $record): string
     {
         $field = new self($value, $column, $record);
         $config = $field->getConfig();
+        if ($config['readOnly']) {
+            return $field->getButtonValue();
+        }
 
         return '
 <a href="javascript:;"
@@ -69,7 +73,7 @@ class ListToggle
      * @param ListColumn $column
      * @param Model      $record
      */
-    public function __construct($value, ListColumn $column, Model $record)
+    public function __construct(string $value, ListColumn $column, Model $record)
     {
         $this->name = $column->columnName;
         $this->value = $value;

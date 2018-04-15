@@ -58,7 +58,7 @@ class RouteResolver
      * @throws \ApplicationException
      * @throws \Exception
      */
-    public function getPageWithComponent($component)
+    public function getPageWithComponent(string $component): ?Page
     {
         if (isset($this->componentPageCache[$component])) {
             return $this->componentPageCache[$component];
@@ -83,17 +83,17 @@ class RouteResolver
     /**
      * @param string $component
      *
-     * @return array|Page|null
+     * @return string|null
      * @throws \ApplicationException
      * @throws \Exception
      */
-    public function resolveRouteTo($component)
+    public function resolveRouteTo(string $component): ?string
     {
         if ($page = $this->getPageWithComponent($component)) {
             return $page->settings['url'];
         }
 
-        return $page;
+        return null;
     }
 
     /**
@@ -101,7 +101,7 @@ class RouteResolver
      *
      * @return string
      */
-    public function stripUrlParameters($url): string
+    public function stripUrlParameters(string $url): string
     {
         if (strpos($url, '/:') !== false) {
             $parts = explode('/:', $url);
@@ -119,7 +119,7 @@ class RouteResolver
      * @throws \ApplicationException
      * @throws \Exception
      */
-    public function resolveRouteWithoutParamsTo($component): string
+    public function resolveRouteWithoutParamsTo(string $component): string
     {
         $page = $this->getPageWithComponent($component);
 
@@ -137,14 +137,14 @@ class RouteResolver
 
     /**
      * @param string $component
-     * @param        $parameter
-     * @param        $value
+     * @param string $parameter
+     * @param string $value
      *
      * @return mixed|null|string
      * @throws \ApplicationException
      * @throws \Exception
      */
-    public function resolveParameterizedRouteTo($component, $parameter, $value)
+    public function resolveParameterizedRouteTo(string $component, string $parameter, string $value): ?string
     {
         $page = $this->getPageWithComponent($component);
 
@@ -193,7 +193,7 @@ class RouteResolver
      *
      * @throws \ApplicationException
      */
-    protected function componentNotFound($component)
+    protected function componentNotFound(string $component): void
     {
         if ($this->config->get('app.debug')) {
             throw new \ApplicationException(
@@ -205,12 +205,12 @@ class RouteResolver
     }
 
     /**
-     * @param        $parameter
+     * @param string $parameter
      * @param string $component
      *
      * @throws \ApplicationException
      */
-    protected function parameterNotFound($parameter, $component)
+    protected function parameterNotFound(string $parameter, string $component): void
     {
         if ($this->config->get('app.debug')) {
             throw new \ApplicationException(

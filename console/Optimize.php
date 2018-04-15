@@ -12,7 +12,6 @@ namespace Keios\Apparatus\Console;
 use Illuminate\Console\Command;
 use Illuminate\Database\Schema\Blueprint;
 
-
 /**
  * Class Optimize
  * @package Keios\Apparatus\Console
@@ -33,7 +32,7 @@ class Optimize extends Command
      * Execute the console command.
      * @throws \ApplicationException
      */
-    public function fire()
+    public function fire(): void
     {
         $this->optimizeDeferredBindings();
         $this->info('Finished');
@@ -44,14 +43,18 @@ class Optimize extends Command
      *
      * @return void
      */
-    public function optimizeDeferredBindings(){
+    public function optimizeDeferredBindings(): void
+    {
         $type = \DB::connection()->getDoctrineColumn('deferred_bindings', 'slave_id')->getType()->getName();
         if ($type === 'string') {
             if ($this->confirm('Do you want to migrate deferred_bindings->slave_id to integer?', 'yes')) {
                 $this->info('Migrating column to integer...');
-                \Schema::table('deferred_bindings', function(Blueprint $table){
-                    $table->integer('slave_id')->unsigned()->change();
-                });
+                \Schema::table(
+                    'deferred_bindings',
+                    function (Blueprint $table) {
+                        $table->integer('slave_id')->unsigned()->change();
+                    }
+                );
             }
         } else {
             $this->info('deferred_bindings already optimized, skipping...');

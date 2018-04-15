@@ -9,10 +9,6 @@ columns:
     id:
         label: ID
         searchable: true
-    status:
-        label: Status
-        type: partial
-        path: $/keios/apparatus/controllers/jobs/_list_status.htm
     label:
         label: Label
         searchable: true
@@ -21,15 +17,20 @@ columns:
         type: partial
         path: $/keios/apparatus/controllers/jobs/_list_progress.htm
         sortable: false
+    is_canceled:
+        label: Canceled
+        type: listtoggle
+        readOnly: true
     progress_current:
         label: Curent Progress
         invisible: true
     progress_max:
         label: Max progress
         invisible: true
-    is_canceled:
-        label: Canceled
-        type: switch
+    status:
+        label: Status
+        type: partial
+        path: $/keios/apparatus/controllers/jobs/_list_status.htm
     created_at:
         label: Started at
         type: datetime

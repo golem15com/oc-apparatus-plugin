@@ -36,8 +36,7 @@ class BackendInjector
             function (Controller $controller) {
 
                 foreach ($this->jsAssets as $asset) {
-
-                    if (is_array($asset['attributes'])) {
+                    if (\is_array($asset['attributes'])) {
                         $asset['attributes']['build'] = 'apparatus-injected';
                     }
 
@@ -45,8 +44,7 @@ class BackendInjector
                 }
 
                 foreach ($this->cssAssets as $asset) {
-
-                    if (is_array($asset['attributes'])) {
+                    if (\is_array($asset['attributes'])) {
                         $asset['attributes']['build'] = 'apparatus-injected';
                     }
 
@@ -68,7 +66,7 @@ class BackendInjector
      * @param string $path
      * @param array  $attributes
      */
-    public function addJs($path, array $attributes = [])
+    public function addJs(string $path, array $attributes = []): void
     {
         $this->jsAssets[] = ['path' => $path, 'attributes' => $attributes];
     }
@@ -77,17 +75,17 @@ class BackendInjector
      * @param string $path
      * @param array  $attributes
      */
-    public function addCss($path, array $attributes = [])
+    public function addCss(string $path, array $attributes = []): void
     {
         $this->cssAssets[] = ['path' => $path, 'attributes' => $attributes];
     }
 
     /**
-     * @param string   $name
-     * @param callable $handler
-     * @param null     $extension
+     * @param string      $name
+     * @param callable    $handler
+     * @param string|null $extension
      */
-    public function addAjaxHandler($name, callable $handler, $extension = null)
+    public function addAjaxHandler(string $name, callable $handler, ?string $extension = null)
     {
         $this->ajaxHandlers[] = ['name' => $name, 'function' => $handler, 'extension' => $extension];
     }

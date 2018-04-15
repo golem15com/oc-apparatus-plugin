@@ -15,25 +15,36 @@ use Request;
  */
 class Jobs extends Controller
 {
+    /**
+     * @var array
+     */
     public $implement = [
         'Backend.Behaviors.FormController',
         'Backend.Behaviors.ListController',
     ];
 
+    /**
+     * @var string
+     */
     public $formConfig = 'config_form.yaml';
+    /**
+     * @var string
+     */
     public $listConfig = 'config_list.yaml';
 
+    /**
+     * Jobs constructor.
+     */
     public function __construct()
     {
         parent::__construct();
-
         BackendMenu::setContext('Keios.Apparatus', 'apparatus', 'jobs');
     }
 
     /**
-     *
+     * Index method
      */
-    public function index()
+    public function index(): void
     {
         $this->addJs('/plugins/keios/apparatus/assets/js/apparatus-jobs.js');
 
@@ -41,9 +52,9 @@ class Jobs extends Controller
     }
 
     /**
-     * @param $id
+     * @param int $id
      */
-    public function view($id)
+    public function view(int $id): void
     {
         /**
          * @var Job|null $job
@@ -60,17 +71,18 @@ class Jobs extends Controller
         }
     }
 
-    public function isSuperuser()
+    /**
+     * @return bool
+     */
+    public function isSuperuser(): bool
     {
-        $user = \BackendAuth::getUser();
-
-        return $user->is_superuser;
+        return (bool)\BackendAuth::getUser()->is_superuser;
     }
 
     /**
      * Deleted checked jobs.
      */
-    public function index_onDelete()
+    public function index_onDelete(): array
     {
         if (($checkedIds = post('checked')) && is_array($checkedIds) && count($checkedIds)) {
 
@@ -118,7 +130,7 @@ class Jobs extends Controller
     /**
      *
      */
-    public function onCancelJob()
+    public function onCancelJob(): void
     {
         $id = post('id');
 

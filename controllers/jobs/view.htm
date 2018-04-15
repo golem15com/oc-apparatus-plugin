@@ -79,7 +79,7 @@
             </tr>
             </thead>
             <tbody>
-            <?php foreach($job->metadata as $key => $value) { ?>
+            <?php foreach($job->getMetadata() as $key => $value) { ?>
             <tr>
                 <td><?= $key ?></td>
                 <?php if(str_contains($value, 'http')) { ?>

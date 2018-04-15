@@ -10,5 +10,5 @@ namespace Keios\Apparatus\Contracts;
 
 interface ApparatusQueueJob
 {
-    public function assignJobId($id);
+    public function assignJobId(int $id);
 }

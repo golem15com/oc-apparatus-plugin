@@ -30,24 +30,18 @@ class DependencyInjector
      * @param $object
      * @throws \ApplicationException
      */
-    public function injectDependencies($object)
+    public function injectDependencies(object $object)
     {
-        if (!is_object($object)) {
-            return;
-        }
-
         if (!$object instanceof NeedsDependencies) {
             return;
         }
 
-        $methods = get_class_methods($object);
-
-        foreach ($methods as $method) {
+        foreach (get_class_methods($object) as $method) {
             if (strpos($method, 'inject') === 0) {
                 try {
                     $this->container->call([$object, $method]);
                 } catch(\Exception $e){
-                    $msg = $e->getMessage() . ' at class: '. get_class($object);
+                    $msg = $e->getMessage() . ' at class: '. \get_class($object);
                     throw new \ApplicationException($msg);
                 }
             }
