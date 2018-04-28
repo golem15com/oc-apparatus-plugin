@@ -11,7 +11,7 @@
   "authors": [
     {
       "name": "Łukasz Biały",
-      "email": "lukasz@keios.eu"
+      "email": "lukasz@c-call.eu"
     },
     {
       "name": "Jakub Zych",
@@ -20,8 +20,6 @@
   ],
   "minimum-stability": "dev",
   "require": {
-    "php": ">=7.1",
-    "morrislaptop/laravel-queue-clear": "~1.0",
     "keios/laravel-apparatus": "~1.0@dev"
   }
 }
