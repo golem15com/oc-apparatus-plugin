@@ -16,6 +16,7 @@ use Keios\Apparatus\Classes\LaravelQueueClearServiceProvider;
 use System\Classes\PluginBase;
 use Keios\LaravelApparatus\LaravelApparatusServiceProvider;
 use October\Rain\Translation\Translator;
+use Keios\Apparatus\FormWidgets\KnobWidget;
 
 /**
  * Apparatus Plugin Information File
@@ -153,6 +154,19 @@ class Plugin extends PluginBase
     {
         return [
             'listtoggle' => [ListToggle::class, 'render'],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function registerFormWidgets()
+    {
+        return [
+            KnobWidget::class => [
+                'label' => 'keios.apparatus::lang.labels.knobFormWidget',
+                'code' => 'knob'
+            ]
         ];
     }
 

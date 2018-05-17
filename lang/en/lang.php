@@ -5,6 +5,8 @@ return [
         'pluginName' => 'Business logic scenario processor',
         'jobs'       => 'Jobs',
         'apparatus'  => 'Apparatus',
+        'knobFormWidget' => 'Knob FormWidget',
+        'kFwDescription' => 'Presents numeric inputs as a knob',
     ],
     'errors'      => [
         'pageWithComponentNotFound' => 'Component %s is not bound to any page in CMS.',

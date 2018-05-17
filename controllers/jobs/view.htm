@@ -35,6 +35,7 @@
                 <?php endif; ?>
             </div>
 
+
             <?php if ($job->status == \Keios\Apparatus\Contracts\JobStatus::ERROR && array_key_exists('error',
             $job->metadata)): ?>
             <div class="scoreboard-item title-value">
@@ -69,6 +70,7 @@
             <span>% Complete</span>
         </div>
     </div>
+    <?php if($job->metadata){ ?>
     <div class="container-fluid">
         <h4>Metadata</h4>
         <table class="table">
@@ -93,6 +95,7 @@
         </table>
 
     </div>
+    <?php } ?>
 </div>
 
 
