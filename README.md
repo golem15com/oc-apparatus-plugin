@@ -148,6 +148,27 @@ Column widget based on Inetis ListSwitch MIT OctoberCMS Plugin. Rewritten to by 
 Use "listtoggle" instead of "switch" and you will get clickable column field that will allow you to switch between true and false for boolean fields.
 
 
+### KnobWidget
+
+Nice widget for selecting number with knob. 
+
+![knob](https://i.viamage.com/jz/screen-2018-05-17-11-27-27.png)
+
+Example yaml:
+
+```
+    my_number:
+      knobLabel: Label that will appear to the right (not above)
+      knobComment: Comment that will appear to the right (not below)
+      type: knob
+      min: 1 # minimum value
+      default: 2 # default value
+      max: 30 # max value
+      angleOffset: -125 # starting point angle
+      angleArc: 250  # whole knob angle 
+
+```
+
 ### Request Sender
 
 Simple curl request sender. DELETE / PUT / GET will be added soon. 

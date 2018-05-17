@@ -10,3 +10,6 @@
     - PHP requirement increased to 7.1
     - Code tuneup
     - List switch replacement
+1.1.1:
+    - Background Import Job
+    - Knob Widget
