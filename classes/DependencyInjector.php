@@ -30,7 +30,7 @@ class DependencyInjector
      * @param object $object
      * @throws ApplicationException
      */
-    public function injectDependencies(object $object)
+    public function injectDependencies($object)
     {
         if (!$object instanceof NeedsDependencies) {
             return;
