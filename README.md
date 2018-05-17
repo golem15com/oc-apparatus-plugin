@@ -141,6 +141,8 @@ Now instead of normal Import behavior popups, you will be redirected to Apparatu
 
 Find more about queue configuration [here](https://octobercms.com/docs/services/queues#running-the-queue-listener).
 
+[Movie with example](http://uploads.keios.eu/video/import-2018-04-29_11.08.25.mp4)
+
 ### ListToggle
 
 Column widget based on Inetis ListSwitch MIT OctoberCMS Plugin. Rewritten to by typesafe and faster.
