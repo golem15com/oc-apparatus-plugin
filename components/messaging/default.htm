@@ -12,9 +12,11 @@
         >
 </div>
 {% flash %}
+{% put scripts %}
 <script type="text/javascript" language="javascript">
     $(function () {
         $.apparatus.messaging.handleFlashMessage('{{ type }}', '{{ message }}');
     });
 </script>
+{% endput %}
 {% endflash %}

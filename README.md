@@ -75,7 +75,7 @@ class SomeComponent {
     
         $job = new MyJobClass();
         $jobManager = \App::make('Keios\Apparatus\Classes\JobManager');
-        $jobManager->dispatch($job);
+        $jobManager->dispatch($job, 'Requests sending');
         
     }
 }
@@ -89,12 +89,87 @@ $jobManager->isSimpleJob(true);
 
 before dispatching - this will remove **successful** job from DB at the end.
 
+### Background Import Manager
+
+**Under development!**
+
+Sometimes you need to import large amount of data, like thousands of rows. While [October ImportExport](https://octobercms.com/docs/backend/import-export) behavior works quite splendid, when working with large CSV you need to increase your php.ini and webserver timeouts.
+
+Apparatus provides solution for that. Replace:
+
+```
+'Backend.Behaviors.ImportExportController' 
+```
+
+with
+
+```
+'Keios.Apparatus.Behaviors.BackgroundImportExportController'
+``` 
+
+and in your Import model use:
+
+```
+public function importData($results, $sessionKey = null)
+{
+    $job = new CsvImportJob($result, 'Acme\Plugin\Models\YourModel', true, 20);
+    $jobManager = \App::make(JobManager::class);
+    $jobId = $jobManager->dispatch($job, 'Rates import');
+
+    return $jobId;
+}
+``` 
+
+CsvImport job takes following arguments:
+
+- results array
+- your main model name
+- updateExisting boolean flag (under development)
+- chunk size (we insert data in chunks during import to make it faster)
+
+You can also replace default CsvImportJob with your own job class.
+
+Now instead of normal Import behavior popups, you will be redirected to Apparatus Job screen:
+
+![import](https://i.viamage.com/jz/screen-2018-04-28-15-29-06.png)
+
+![job](https://i.viamage.com/jz/screen-2018-04-28-15-15-26.png)
+
+![job_complete](https://i.viamage.com/jz/screen-2018-04-28-15-29-55.png)
+
+**Remember to replace Sync driver for your queue with something else and start queue worker. We recommend Redis.**
+
+Find more about queue configuration [here](https://octobercms.com/docs/services/queues#running-the-queue-listener).
+
+[Movie with example](http://uploads.keios.eu/video/import-2018-04-29_11.08.25.mp4)
+
 ### ListToggle
 
 Column widget based on Inetis ListSwitch MIT OctoberCMS Plugin. Rewritten to by typesafe and faster.
 
 Use "listtoggle" instead of "switch" and you will get clickable column field that will allow you to switch between true and false for boolean fields.
 
+
+### KnobWidget
+
+Nice widget for selecting number with knob. 
+
+![knob](https://i.viamage.com/jz/screen-2018-05-17-11-27-27.png)
+
+Example yaml:
+
+```
+    my_number:
+      knobLabel: Label that will appear to the right (not above)
+      knobComment: Comment that will appear to the right (not below)
+      type: knob
+      min: 1 # minimum value
+      default: 2 # default value
+      max: 30 # max value
+      angleOffset: -125 # starting point angle
+      angleArc: 250  # whole knob angle 
+
+```
 
 ### Request Sender
 
