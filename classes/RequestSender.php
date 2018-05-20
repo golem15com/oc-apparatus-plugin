@@ -33,4 +33,25 @@ class RequestSender
 
         return $result;
     }
+
+    /**
+     * @param array  $data
+     * @param string $url
+     * @return array|bool
+     */
+    public function sendGetRequest(array $data, string $url)
+    {
+        $ch = curl_init();
+        $query = http_build_query($data);
+        if($query){
+            $url .= '?'.$query;
+        }
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $result = curl_exec($ch);
+
+        curl_close($ch);
+
+        return $result;
+    }
 }
