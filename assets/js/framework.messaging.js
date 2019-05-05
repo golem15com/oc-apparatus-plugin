@@ -1,30 +1,30 @@
-;
+
 $(function () {
 
-    "use strict";
+    'use strict'
 
     if (!$.apparatus) {
-        $.apparatus = {};
+        $.apparatus = {}
     }
 
     var defaults = {
         noty: {
             layout: 'top',
-            theme: 'bootstrapTheme', // or 'relax'
+            theme: 'bootstrap-v4', // or 'relax'
             type: 'alert',
             text: '', // can be html or string
             dismissQueue: true, // If you want to use queue feature set this true
             template: '<div class="noty_message"><span class="noty_text"></span><div class="noty_close"></div></div>',
             animation: {
-                open: {height: 'toggle'},
-                close: {height: 'toggle'},
+                open: {},
+                close: {},
                 easing: 'swing',
                 speed: 1
             },
             timeout: false, // delay for closing event. Set false for sticky notifications
             force: false, // adds notification to the beginning of queue when set to true
             modal: false,
-            maxVisible: 5, // you can set max visible notification for dismissQueue true option,
+            maxVisible: 5000, // you can set max visible notification for dismissQueue true option,
             killer: false, // for close all notifications before show
             closeWith: ['click'], // ['click', 'button', 'hover', 'backdrop'] // backdrop click will close all notifications
             callback: {
@@ -41,55 +41,51 @@ $(function () {
             },
             buttons: false // an array of buttons
         }
-    };
+    }
 
     var Messaging = function () {
+        var self = this
 
-        if (!window.noty) {
-            return;
-        }
-
-        var self = this;
-
-        var configEl = $('[data-messaging-config]');
+        var configEl = $('[data-messaging-config]')
 
         if (configEl.length) {
-            configEl = configEl.first();
+            configEl = configEl.first()
         }
 
-        var config = this.makeConfig(configEl);
+        var config = this.makeConfig(configEl)
 
-        this.config = $.extend(true, {}, defaults, config);
+        this.config = $.extend(true, {}, defaults, config)
 
         // kill alert
         $(window).on('ajaxErrorMessage', function (event, message) {
-            event.preventDefault();
-            self.handleMessage({type: 'error', text: message});
-        });
-    };
+            event.preventDefault()
+            self.handleMessage({type: 'error', text: message})
+        })
+    }
 
     Messaging.prototype.handleMessage = function (options) {
-        noty($.extend(true, {}, this.config.noty, options));
-    };
+        console.log(this.config.noty);
+        new Noty($.extend(true, {}, this.config.noty, options)).show()
+    }
 
     Messaging.prototype.handleFlashMessage = function (type, message) {
-        this.handleMessage({type: this.parseFlashMessageType(type), text: message});
-    };
+        this.handleMessage({type: this.parseFlashMessageType(type), text: message})
+    }
 
     Messaging.prototype.parseFlashMessageType = function (flashMessageType) {
         switch (flashMessageType) {
             case 'info':
-                return 'information';
-                break;
+                return 'information'
+                break
             default:
-                return flashMessageType;
-                break;
+                return flashMessageType
+                break
         }
-    };
+    }
 
     Messaging.prototype.makeConfig = function (configEl) {
         if (!configEl.data) {
-            return {};
+            return {}
         }
 
         return {
@@ -107,8 +103,8 @@ $(function () {
                 modal: configEl.data('msgModal') ? configEl.data('msgModal') : defaults.noty.modal,
                 maxVisible: configEl.data('msgMaxVisible') ? configEl.data('msgMaxVisible') : defaults.noty.maxVisible
             }
-        };
-    };
+        }
+    }
 
-    $.apparatus.messaging = new Messaging();
-});
+    $.apparatus.messaging = new Messaging()
+})

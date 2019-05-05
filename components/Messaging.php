@@ -31,7 +31,7 @@ class Messaging extends ComponentBase
             'description' => 'Provides Apparatus Messaging functionality'
         ];
     }
-    
+
     public function defineProperties(): array
     {
 
@@ -56,7 +56,7 @@ class Messaging extends ComponentBase
             ]
         ];
     }
-    
+
     /**
      * Component onRun method
      */
@@ -66,10 +66,11 @@ class Messaging extends ComponentBase
             $this->addCss('/plugins/keios/apparatus/assets/css/animate.min.css');
         }
         if($this->property('injectNoty')) {
-            $this->addJs('/plugins/keios/apparatus/assets/js/noty/packaged/jquery.noty.packaged.min.js');
+            $this->addJs('/plugins/keios/apparatus/assets/js/noty/noty.min.js');
+            $this->addCss('/plugins/keios/apparatus/assets/js/noty/noty.css');
         }
         if($this->property('injectMain')) {
-            $this->addJs('/plugins/keios/apparatus/assets/js/framework.messaging.min.js');
+            $this->addJs('/plugins/keios/apparatus/assets/js/framework.messaging.js');
         }
 
         $settings = Settings::instance()->value;
@@ -83,11 +84,13 @@ class Messaging extends ComponentBase
         $this->closeAnimation = $settings['closeAnimation'];
         $this->theme = $settings['theme'];
         $this->template = $settings['template'];
-        $this->timeout = $settings['timeout'];
+        $this->timeout = $settings['timeout'] * 1000;
         $this->dismissQueue = $settings['dismissQueue'];
         $this->force = $settings['force'];
         $this->modal = $settings['modal'];
-        $this->maxVisible = $settings['maxVisible'];
+        $this->maxVisible = $settings['maxVisible'] * 1000;
+
+        $this->addCss('/plugins/keios/apparatus/assets/js/noty/themes/' . $this->theme . '.css');
     }
 
 }

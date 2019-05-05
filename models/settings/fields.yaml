@@ -15,9 +15,9 @@ secondaryTabs:
         theme:
             label: keios.apparatus::lang.settings.messaging-theme
             tab: keios.apparatus::lang.settings.messaging-tab
-            type: text
+            type: dropdown
             span: right
-            placeholder: 'defaultTheme / relax / bootstrapTheme'
+
         openAnimation:
             label: keios.apparatus::lang.settings.messaging-openAnimation
             tab: keios.apparatus::lang.settings.messaging-tab

@@ -115,6 +115,20 @@ class Settings extends Model
         ];
     }
 
+    public function getThemeOptions()
+    {
+        return [
+            'bootstrap-v3' => 'bootstrap-v3',
+            'bootstrap-v4' => 'bootstrap-v4',
+            'metroui'      => 'metroui',
+            'mint'         => 'mint',
+            'nest'         => 'nest',
+            'relax'        => 'relax',
+            'semanticui'   => 'semanticui',
+            'sunset'       => 'sunset',
+        ];
+    }
+
     /**
      * @return array
      */
