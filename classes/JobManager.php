@@ -79,9 +79,9 @@ class JobManager
             'is_admin'     => $isAdmin,
             'progress'     => 0,
             'progress_max' => $count,
-            'metadata'   => json_encode($metadata),
-            'updated_at' => $now,
-            'created_at' => $now,
+            'metadata'     => json_encode($metadata),
+            'updated_at'   => $now,
+            'created_at'   => $now,
         ];
         $jobId = $this->db->table(self::JOB_TABLE)->insertGetId(
             $insertArray
@@ -186,8 +186,9 @@ class JobManager
     public function getMetadata(int $id): array
     {
         $json = $this->db->table(self::JOB_TABLE)->where('id', $id)->select('metadata')->first()->metadata;
+        $decoded = json_decode($json, true);
 
-        return json_decode($json, true);
+        return $decoded ?: [];
     }
 
     /**
