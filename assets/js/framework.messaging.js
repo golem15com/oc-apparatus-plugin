@@ -58,6 +58,10 @@ $(function () {
 
         // kill alert
         $(window).on('ajaxErrorMessage', function (event, message) {
+            let json = JSON.parse(message)
+            if (json.X_OCTOBER_ERROR_MESSAGE) {
+               message =  json.X_OCTOBER_ERROR_MESSAGE;
+            }
             event.preventDefault()
             self.handleMessage({type: 'error', text: message})
         })

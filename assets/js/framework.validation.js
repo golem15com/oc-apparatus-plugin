@@ -31,16 +31,8 @@
             self.clearValidationErrors();
         });
 
-        this.$window.on('ajaxError', function (event, context, textString, jqXHR) {
-            // prevent alert on if error fields is present
-            if (jqXHR.hasOwnProperty('responseJSON') && jqXHR['responseJSON'].hasOwnProperty('X_OCTOBER_ERROR_FIELDS')) {
-                event.preventDefault()
-            }
-
-            // show errors other than validation in console
-            if (self.config.debug && jqXHR.hasOwnProperty('responseJSON') && jqXHR['responseJSON'].hasOwnProperty('X_OCTOBER_ERROR_MESSAGE')) {
-                console.log(jqXHR['responseJSON']['X_OCTOBER_ERROR_MESSAGE']);
-            }
+        this.$window.on('ajaxErrorMessage', function (event, context, textString, jqXHR) {
+            event.preventDefault();
         });
 
         this.$window.on('ajaxInvalidField', function (event, fieldElement, fieldName, fieldMessages, isFirstInvalidField) {
