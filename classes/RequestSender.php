@@ -41,17 +41,26 @@ class RequestSender
      */
     public function sendGetRequest(array $data, string $url)
     {
+        $error = false;
         $ch = curl_init();
         $query = http_build_query($data);
-        if($query){
+        if ($query) {
             $url .= '?'.$query;
         }
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $result = curl_exec($ch);
+        $content = curl_exec($ch);
+        if (curl_errno($ch)) {
+            $error = curl_error($ch);
+        }
 
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
 
-        return $result;
+        return [
+            'code'    => $httpCode,
+            'content' => $content,
+            'error'   => $error,
+        ];
     }
 }
