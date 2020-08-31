@@ -39,7 +39,7 @@ class RequestSender
      * @param string $url
      * @return array|bool
      */
-    public function sendGetRequest(array $data, string $url)
+    public function sendGetRequest(array $data, string $url, $ignoreSsl = false)
     {
         $error = false;
         $ch = curl_init();
@@ -49,6 +49,9 @@ class RequestSender
         }
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        if($ignoreSsl){
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        }
         $content = curl_exec($ch);
         if (curl_errno($ch)) {
             $error = curl_error($ch);
