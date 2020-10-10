@@ -5,6 +5,7 @@ use Illuminate\Contracts\Config\Repository;
 use Cms\Classes\Theme;
 use Cms\Classes\Page;
 use October\Rain\Exception\ApplicationException;
+use Psr\Log\LoggerInterface;
 
 /**
  * Class RouteResolver
@@ -44,7 +45,7 @@ class RouteResolver
      * @param Repository $config
      * @param Log        $log
      */
-    public function __construct(Repository $config, Log $log)
+    public function __construct(Repository $config, LoggerInterface $log)
     {
         $this->theme = Theme::getActiveTheme();
         $this->pages = Page::listInTheme($this->theme, true);
