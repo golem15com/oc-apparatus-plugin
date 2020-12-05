@@ -20,6 +20,6 @@
   ],
   "minimum-stability": "dev",
   "require": {
-    "keios/laravel-apparatus": "~1.0@dev"
+    "keios/laravel-apparatus": "dev-develop"
   }
 }
