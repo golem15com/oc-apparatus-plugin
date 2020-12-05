@@ -14,6 +14,22 @@ namespace Keios\Apparatus\Classes;
  */
 class RequestSender
 {
+    public $headers = [];
+
+    /**
+     * RequestSender constructor.
+     *
+     * @param string      $contentType
+     * @param string|null $bearerToken
+     */
+    public function __construct($bearerToken = null, $contentType = 'application/json')
+    {
+        $this->headers[] = 'Content-Type: '.$contentType;
+        if ($bearerToken) {
+            $this->headers[] = 'Authorization: Bearer '.$bearerToken;
+        }
+    }
+
     /**
      * @param array  $data
      * @param string $url
@@ -24,6 +40,7 @@ class RequestSender
         $ch = curl_init();
 
         curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -48,6 +65,8 @@ class RequestSender
             $url .= '?'.$query;
         }
         curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         if($ignoreSsl){
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
@@ -65,5 +84,10 @@ class RequestSender
             'content' => $content,
             'error'   => $error,
         ];
+    }
+
+    public function addHeader($header)
+    {
+        $this->headers[] = $header;
     }
 }
