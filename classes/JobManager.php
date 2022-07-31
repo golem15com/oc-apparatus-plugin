@@ -60,7 +60,7 @@ class JobManager
     {
         $isAdmin = false;
         $userId = null;
-        if ($user = \Auth::getUser()) {
+        if (class_exists(\Auth::class) && $user = \Auth::getUser()) {
             $userId = $user->id;
             $isAdmin = false;
         }
