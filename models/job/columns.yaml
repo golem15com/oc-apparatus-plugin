@@ -6,9 +6,6 @@ columns:
     id:
         label: ID
         searchable: true
-    id:
-        label: ID
-        searchable: true
     label:
         label: Label
         searchable: true
