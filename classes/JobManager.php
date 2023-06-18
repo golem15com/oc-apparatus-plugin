@@ -56,7 +56,7 @@ class JobManager
      * @param array             $parameters
      * @return int
      */
-    public function dispatch(ApparatusQueueJob $job, string $label, array $parameters = []): int
+    public function dispatch(ApparatusQueueJob $job, string $label, array $parameters = [], int $delay = 0): int
     {
         $isAdmin = false;
         $userId = null;
@@ -87,7 +87,11 @@ class JobManager
             $insertArray
         );
         $job->assignJobId($jobId);
-        $this->queue->push($job);
+        if ($delay > 0) {
+            $this->queue->later($delay, $job);
+        } else {
+            $this->queue->push($job);
+        }
 
         return $jobId;
     }
