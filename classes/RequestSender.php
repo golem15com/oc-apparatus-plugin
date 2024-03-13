@@ -6,11 +6,11 @@
  * Time: 2:45 PM
  */
 
-namespace Keios\Apparatus\Classes;
+namespace Golem15\Apparatus\Classes;
 
 /**
  * Class RequestSender
- * @package Keios\Apparatus\Classes
+ * @package Golem15\Apparatus\Classes
  */
 class RequestSender
 {

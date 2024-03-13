@@ -1,4 +1,4 @@
-<?php namespace Keios\Apparatus\Classes;
+<?php namespace Golem15\Apparatus\Classes;
 
 use Illuminate\Contracts\Logging\Log;
 use Illuminate\Contracts\Config\Repository;
@@ -10,7 +10,7 @@ use Psr\Log\LoggerInterface;
 /**
  * Class RouteResolver
  *
- * @package Keios\Apparatus\Classes
+ * @package Golem15\Apparatus\Classes
  */
 class RouteResolver
 {
@@ -199,11 +199,11 @@ class RouteResolver
     {
         if ($this->config->get('app.debug')) {
             throw new \ApplicationException(
-                sprintf(trans('keios.apparatus::lang.errors.pageWithComponentNotFound'), $component)
+                sprintf(trans('golem15.apparatus::lang.errors.pageWithComponentNotFound'), $component)
             );
         }
 
-        $this->log->error(sprintf(trans('keios.apparatus::lang.errors.pageWithComponentNotFound'), $component));
+        $this->log->error(sprintf(trans('golem15.apparatus::lang.errors.pageWithComponentNotFound'), $component));
     }
 
     /**
@@ -216,12 +216,12 @@ class RouteResolver
     {
         if ($this->config->get('app.debug')) {
             throw new ApplicationException(
-                sprintf(trans('keios.apparatus::lang.errors.parameterNotFound'), $parameter, $component)
+                sprintf(trans('golem15.apparatus::lang.errors.parameterNotFound'), $parameter, $component)
             );
         }
 
         $this->log->error(
-            sprintf(trans('keios.apparatus::lang.errors.parameterNotFound'), $parameter, $component)
+            sprintf(trans('golem15.apparatus::lang.errors.parameterNotFound'), $parameter, $component)
         );
     }
 }

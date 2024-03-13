@@ -1,6 +1,6 @@
 <?php Block::put('breadcrumb') ?>
 <ul>
-    <li><a href="<?= Backend::url('keios/apparatus/jobs') ?>">Jobs</a></li>
+    <li><a href="<?= Backend::url('golem15/apparatus/jobs') ?>">Jobs</a></li>
     <li><?= e($this->pageTitle) ?></li>
 </ul>
 <?php Block::endPut() ?>
@@ -24,10 +24,10 @@
 
             <div class="scoreboard-item title-value">
                 <h4>Status</h4>
-                <?php if ($job->status == \Keios\Apparatus\Contracts\JobStatus::ERROR): ?>
+                <?php if ($job->status == \Golem15\Apparatus\Contracts\JobStatus::ERROR): ?>
                 <p data-job-id="<?= $job->id ?>" data-job-status="<?= $job->status ?>" class="danger"><?= $job->
                     getStatus() ?></p>
-                <?php elseif ($job->status == \Keios\Apparatus\Contracts\JobStatus::COMPLETE): ?>
+                <?php elseif ($job->status == \Golem15\Apparatus\Contracts\JobStatus::COMPLETE): ?>
                 <p data-job-id="<?= $job->id ?>" data-job-status="<?= $job->status ?>" class="success"><?= $job->
                     getStatus() ?></p>
                 <?php else: ?>
@@ -36,7 +36,7 @@
             </div>
 
 
-            <?php if ($job->status == \Keios\Apparatus\Contracts\JobStatus::ERROR && array_key_exists('error',
+            <?php if ($job->status == \Golem15\Apparatus\Contracts\JobStatus::ERROR && array_key_exists('error',
             $job->metadata)): ?>
             <div class="scoreboard-item title-value">
                 <h4>Error</h4>

@@ -1,10 +1,10 @@
-<?php namespace Keios\Apparatus\FormWidgets;
+<?php namespace Golem15\Apparatus\FormWidgets;
 
 use Backend\Classes\FormWidgetBase;
 
 /**
  * Class KnobWidget
- * @package Keios\KnobWidget\FormWidgets
+ * @package Golem15\KnobWidget\FormWidgets
  */
 class KnobWidget extends FormWidgetBase
 {
@@ -14,8 +14,8 @@ class KnobWidget extends FormWidgetBase
     public function widgetDetails()
     {
         return [
-            'name' => 'keios.apparatus::lang.labels.knobFormWidget',
-            'description' => 'keios.apparatus::lang.labels.kFwDescription'
+            'name' => 'golem15.apparatus::lang.labels.knobFormWidget',
+            'description' => 'golem15.apparatus::lang.labels.kFwDescription'
         ];
     }
 

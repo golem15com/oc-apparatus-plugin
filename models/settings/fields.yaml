@@ -8,53 +8,53 @@ secondaryTabs:
     fields:
 
         layout:
-            label: keios.apparatus::lang.settings.messaging-layout
-            tab: keios.apparatus::lang.settings.messaging-tab
+            label: golem15.apparatus::lang.settings.messaging-layout
+            tab: golem15.apparatus::lang.settings.messaging-tab
             span: left
             type: dropdown
         theme:
-            label: keios.apparatus::lang.settings.messaging-theme
-            tab: keios.apparatus::lang.settings.messaging-tab
+            label: golem15.apparatus::lang.settings.messaging-theme
+            tab: golem15.apparatus::lang.settings.messaging-tab
             type: dropdown
             span: right
 
         openAnimation:
-            label: keios.apparatus::lang.settings.messaging-openAnimation
-            tab: keios.apparatus::lang.settings.messaging-tab
+            label: golem15.apparatus::lang.settings.messaging-openAnimation
+            tab: golem15.apparatus::lang.settings.messaging-tab
             span: left
             type: dropdown
             default: 'animated fadeIn'
         closeAnimation:
-            label: keios.apparatus::lang.settings.messaging-closeAnimation
-            tab: keios.apparatus::lang.settings.messaging-tab
+            label: golem15.apparatus::lang.settings.messaging-closeAnimation
+            tab: golem15.apparatus::lang.settings.messaging-tab
             span: right
             type: dropdown
             default: 'animated fadeOut'
         dismissQueue:
-            label: keios.apparatus::lang.settings.messaging-dismissQueue
-            tab: keios.apparatus::lang.settings.messaging-tab
+            label: golem15.apparatus::lang.settings.messaging-dismissQueue
+            tab: golem15.apparatus::lang.settings.messaging-tab
             type: switch
         force:
-            label: keios.apparatus::lang.settings.messaging-force
-            tab: keios.apparatus::lang.settings.messaging-tab
+            label: golem15.apparatus::lang.settings.messaging-force
+            tab: golem15.apparatus::lang.settings.messaging-tab
             type: switch
         modal:
-            label: keios.apparatus::lang.settings.messaging-modal
-            tab: keios.apparatus::lang.settings.messaging-tab
+            label: golem15.apparatus::lang.settings.messaging-modal
+            tab: golem15.apparatus::lang.settings.messaging-tab
             type: switch
         timeout:
-            label: keios.apparatus::lang.settings.messaging-timeout
-            tab: keios.apparatus::lang.settings.messaging-tab
+            label: golem15.apparatus::lang.settings.messaging-timeout
+            tab: golem15.apparatus::lang.settings.messaging-tab
             span: left
             type: number
             default: 5
         maxVisible:
-            label: keios.apparatus::lang.settings.messaging-maxVisible
-            tab: keios.apparatus::lang.settings.messaging-tab
+            label: golem15.apparatus::lang.settings.messaging-maxVisible
+            tab: golem15.apparatus::lang.settings.messaging-tab
             type: number
             span: right
             default: 5
         template:
-            label: keios.apparatus::lang.settings.messaging-template
-            tab: keios.apparatus::lang.settings.messaging-tab
+            label: golem15.apparatus::lang.settings.messaging-template
+            tab: golem15.apparatus::lang.settings.messaging-tab
             type: textarea

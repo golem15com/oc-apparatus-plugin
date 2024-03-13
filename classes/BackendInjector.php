@@ -1,11 +1,11 @@
-<?php namespace Keios\Apparatus\Classes;
+<?php namespace Golem15\Apparatus\Classes;
 
 use Backend\Classes\Controller;
 
 /**
  * Class BackendInjector
  *
- * @package Keios\Apparatus\Classes
+ * @package Golem15\Apparatus\Classes
  */
 class BackendInjector
 {
@@ -56,7 +56,7 @@ class BackendInjector
                 }
 
                 if ($this->useBackendJSInjector) {
-                    $controller->addJs('/plugins/keios/apparatus/assets/js/framework.validation.js', 'apparatus');
+                    $controller->addJs('/plugins/golem15/apparatus/assets/js/framework.validation.js', 'apparatus');
                 }
             }
         );

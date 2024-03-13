@@ -10,7 +10,7 @@ Apparatus is a set of tools for OctoberCMS. Requires PHP7.1
 * Background Job Manager
 * Simple request sender
 * Backend assets and ajax injector
-* Event-based business logic scenario processor for painless application behavior management & modification. 
+* Event-based business logic scenario processor for painless application behavior management & modification.
 
 ### Notifications ###
 
@@ -26,7 +26,7 @@ Here is an example of using with a OctoberCMS component:
 <?php namespace Acme\Plugin\Components;
 
 use Cms\Classes\ComponentBase;
-use Keios\Apparatus\Contracts\NeedsDependencies;
+use Golem15\Apparatus\Contracts\NeedsDependencies;
 use Acme\Plugin\Classes\WebsiteRepository;
 
 class AcmeComponent extends ComponentBase implements NeedsDependencies
@@ -61,7 +61,7 @@ class AcmeComponent extends ComponentBase implements NeedsDependencies
 
 ### Background Job Manager
 
-With Apparatus JobManager you can easily push jobs to queue and see their progress in backend. 
+With Apparatus JobManager you can easily push jobs to queue and see their progress in backend.
 
 Check jobs\SendRequestJob.php for exemplary job structure.
 
@@ -72,20 +72,20 @@ When you have your file, you can deploy it from within controller like:
 
 class SomeComponent {
     public function onDeployJob(){
-    
+
         $job = new MyJobClass();
-        $jobManager = \App::make('Keios\Apparatus\Classes\JobManager');
+        $jobManager = \App::make('Golem15\Apparatus\Classes\JobManager');
         $jobManager->dispatch($job, 'Requests sending');
-        
+
     }
 }
 ```
 
-If you do not want to clutter your controller (eg if you have job that is run every few minutes), you can use 
+If you do not want to clutter your controller (eg if you have job that is run every few minutes), you can use
 
 ```
 $jobManager->isSimpleJob(true);
-```  
+```
 
 before dispatching - this will remove **successful** job from DB at the end.
 
@@ -98,14 +98,14 @@ Sometimes you need to import large amount of data, like thousands of rows. While
 Apparatus provides solution for that. Replace:
 
 ```
-'Backend.Behaviors.ImportExportController' 
+'Backend.Behaviors.ImportExportController'
 ```
 
 with
 
 ```
-'Keios.Apparatus.Behaviors.BackgroundImportExportController'
-``` 
+'Golem15.Apparatus.Behaviors.BackgroundImportExportController'
+```
 
 and in your Import model use:
 
@@ -118,7 +118,7 @@ public function importData($results, $sessionKey = null)
 
     return $jobId;
 }
-``` 
+```
 
 CsvImport job takes following arguments:
 
@@ -141,7 +141,7 @@ Now instead of normal Import behavior popups, you will be redirected to Apparatu
 
 Find more about queue configuration [here](https://octobercms.com/docs/services/queues#running-the-queue-listener).
 
-[Movie with example](http://uploads.keios.eu/video/import-2018-04-29_11.08.25.mp4)
+[Movie with example](http://uploads.golem15.eu/video/import-2018-04-29_11.08.25.mp4)
 
 ### ListToggle
 
@@ -152,7 +152,7 @@ Use "listtoggle" instead of "switch" and you will get clickable column field tha
 
 ### KnobWidget
 
-Nice widget for selecting number with knob. 
+Nice widget for selecting number with knob.
 
 ![knob](https://i.viamage.com/jz/screen-2018-05-17-11-27-27.png)
 
@@ -167,13 +167,13 @@ Example yaml:
       default: 2 # default value
       max: 30 # max value
       angleOffset: -125 # starting point angle
-      angleArc: 250  # whole knob angle 
+      angleArc: 250  # whole knob angle
 
 ```
 
 ### Request Sender
 
-Simple curl request sender. DELETE / PUT / GET will be added soon. 
+Simple curl request sender. DELETE / PUT / GET will be added soon.
 
 ```php
 <?php
@@ -185,14 +185,14 @@ class SomeClass {
      'bought_at' => '2018-05-05 12:30'
     ];
 
-    $requestSender = new \Keios\Apparatus\Classes\RequestSender();
-    
+    $requestSender = new \Golem15\Apparatus\Classes\RequestSender();
+
     $curlResponse = $requestSender->sendPostRequest($data, 'http://example.com/api/_mybooks/add');
-    
+
     }
 }
 ```
- 
+
 
 ### Scenario Processor ###
 

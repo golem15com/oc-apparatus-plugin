@@ -24,7 +24,7 @@
 
     // Actually loads the image
     image.src = url;
-})('http://' + window.location.hostname + '/plugins/keios/apparatus/assets/img/keios2.png');
+})('http://' + window.location.hostname + '/plugins/golem15/apparatus/assets/img/golem152.png');
 
 console.log("%cIf you are not sure what you are doing here, please leave.", "color: #0a6dca; font-family: sans-serif; font-size: 2.5em; font-weight: bolder; text-shadow: #074b8a 1px 1px;");
-console.log('For help, please visit https://keios.eu/');
+console.log('For help, please visit https://golem15.eu/');

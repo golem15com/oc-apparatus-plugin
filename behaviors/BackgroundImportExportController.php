@@ -1,4 +1,4 @@
-<?php namespace Keios\Apparatus\Behaviors;
+<?php namespace Golem15\Apparatus\Behaviors;
 
 use Str;
 use Lang;
@@ -58,7 +58,7 @@ class BackgroundImportExportController extends Backend\Behaviors\ImportExportCon
             $jobId = $model->import($matches, $importOptions);
 
             $this->vars['jobId'] = $jobId;
-            $this->vars['returnUrl'] = \Backend::url('keios/apparatus/jobs/view/'.$jobId);
+            $this->vars['returnUrl'] = \Backend::url('golem15/apparatus/jobs/view/'.$jobId);
         }
         catch (MassAssignmentException $ex) {
             $this->controller->handleError(new ApplicationException(Lang::get(

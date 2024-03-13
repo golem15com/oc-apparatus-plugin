@@ -1,4 +1,4 @@
-<?php namespace Keios\Apparatus\Models;
+<?php namespace Golem15\Apparatus\Models;
 
 use October\Rain\Database\Model;
 
@@ -25,7 +25,7 @@ class Settings extends Model
     /**
      * A unique code of settings
      */
-    public $settingsCode = 'keios::apparatus.settings';
+    public $settingsCode = 'golem15::apparatus.settings';
 
     /**
      * Reference to field configuration

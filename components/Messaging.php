@@ -1,12 +1,12 @@
-<?php namespace Keios\Apparatus\Components;
+<?php namespace Golem15\Apparatus\Components;
 
 use Cms\Classes\ComponentBase;
-use Keios\Apparatus\Models\Settings;
+use Golem15\Apparatus\Models\Settings;
 
 /**
  * Class Messaging
  *
- * @package Keios\Apparatus\Components
+ * @package Golem15\Apparatus\Components
  */
 class Messaging extends ComponentBase
 {
@@ -37,20 +37,20 @@ class Messaging extends ComponentBase
 
         return [
             'injectMain' => [
-                'title'       => 'keios.apparatus::lang.strings.inject_main',
-                'description' => 'keios.apparatus::lang.strings.inject_main_desc',
+                'title'       => 'golem15.apparatus::lang.strings.inject_main',
+                'description' => 'golem15.apparatus::lang.strings.inject_main_desc',
                 'type'        => 'checkbox',
                 'default'     => true,
             ],
             'injectNoty' => [
-                'title'       => 'keios.apparatus::lang.strings.inject_noty',
-                'description' => 'keios.apparatus::lang.strings.inject_noty_desc',
+                'title'       => 'golem15.apparatus::lang.strings.inject_noty',
+                'description' => 'golem15.apparatus::lang.strings.inject_noty_desc',
                 'type'        => 'checkbox',
                 'default'     => true,
             ],
             'injectAnimate' => [
-                'title'       => 'keios.apparatus::lang.strings.inject_animate',
-                'description' => 'keios.apparatus::lang.strings.inject_animate_desc',
+                'title'       => 'golem15.apparatus::lang.strings.inject_animate',
+                'description' => 'golem15.apparatus::lang.strings.inject_animate_desc',
                 'type'        => 'checkbox',
                 'default'     => true,
             ]
@@ -63,14 +63,14 @@ class Messaging extends ComponentBase
     public function onRun(): void
     {
         if($this->property('injectAnimate')) {
-            $this->addCss('/plugins/keios/apparatus/assets/css/animate.min.css');
+            $this->addCss('/plugins/golem15/apparatus/assets/css/animate.min.css');
         }
         if($this->property('injectNoty')) {
-            $this->addJs('/plugins/keios/apparatus/assets/js/noty/noty.min.js');
-            $this->addCss('/plugins/keios/apparatus/assets/js/noty/noty.css');
+            $this->addJs('/plugins/golem15/apparatus/assets/js/noty/noty.min.js');
+            $this->addCss('/plugins/golem15/apparatus/assets/js/noty/noty.css');
         }
         if($this->property('injectMain')) {
-            $this->addJs('/plugins/keios/apparatus/assets/js/framework.messaging.js');
+            $this->addJs('/plugins/golem15/apparatus/assets/js/framework.messaging.js');
         }
 
         $settings = Settings::instance()->value;
@@ -90,7 +90,7 @@ class Messaging extends ComponentBase
         $this->modal = $settings['modal'];
         $this->maxVisible = $settings['maxVisible'] * 1000;
 
-        $this->addCss('/plugins/keios/apparatus/assets/js/noty/themes/' . $this->theme . '.css');
+        $this->addCss('/plugins/golem15/apparatus/assets/js/noty/themes/' . $this->theme . '.css');
     }
 
 }

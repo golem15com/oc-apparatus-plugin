@@ -1,4 +1,4 @@
-<?php namespace Keios\Apparatus;
+<?php namespace Golem15\Apparatus;
 
 use Backend;
 use Backend\Classes\Controller;
@@ -6,17 +6,17 @@ use Cms\Classes\ComponentBase;
 use Event;
 use Flash;
 use Illuminate\Foundation\AliasLoader;
-use Keios\Apparatus\Classes\BackendInjector;
-use Keios\Apparatus\Classes\DependencyInjector;
-use Keios\Apparatus\Classes\RouteResolver;
-use Keios\Apparatus\Console\Optimize;
-use Keios\Apparatus\FormWidgets\ListToggle;
-use Keios\Apparatus\Console\QueueClearCommand;
-use Keios\Apparatus\Classes\LaravelQueueClearServiceProvider;
+use Golem15\Apparatus\Classes\BackendInjector;
+use Golem15\Apparatus\Classes\DependencyInjector;
+use Golem15\Apparatus\Classes\RouteResolver;
+use Golem15\Apparatus\Console\Optimize;
+use Golem15\Apparatus\FormWidgets\ListToggle;
+use Golem15\Apparatus\Console\QueueClearCommand;
+use Golem15\Apparatus\Classes\LaravelQueueClearServiceProvider;
 use System\Classes\PluginBase;
 use Keios\LaravelApparatus\LaravelApparatusServiceProvider;
 use October\Rain\Translation\Translator;
-use Keios\Apparatus\FormWidgets\KnobWidget;
+use Golem15\Apparatus\FormWidgets\KnobWidget;
 
 /**
  * Apparatus Plugin Information File
@@ -33,8 +33,8 @@ class Plugin extends PluginBase
     {
         return [
             'name'        => 'Apparatus',
-            'description' => 'keios.apparatus::lang.labels.pluginName',
-            'author'      => 'Keios',
+            'description' => 'golem15.apparatus::lang.labels.pluginName',
+            'author'      => 'Golem15',
             'icon'        => 'icon-cogs',
         ];
     }
@@ -55,13 +55,13 @@ class Plugin extends PluginBase
     public function registerPermissions(): array
     {
         return [
-            'keios.apparatus.access_settings' => [
-                'tab'   => 'keios.apparatus::lang.permissions.tab',
-                'label' => 'keios.apparatus::lang.permissions.access_settings',
+            'golem15.apparatus.access_settings' => [
+                'tab'   => 'golem15.apparatus::lang.permissions.tab',
+                'label' => 'golem15.apparatus::lang.permissions.access_settings',
             ],
-            'keios.apparatus.access_jobs'     => [
-                'tab'   => 'keios.apparatus::lang.permissions.tab',
-                'label' => 'keios.apparatus::lang.permissions.access_jobs',
+            'golem15.apparatus.access_jobs'     => [
+                'tab'   => 'golem15.apparatus::lang.permissions.tab',
+                'label' => 'golem15.apparatus::lang.permissions.access_jobs',
             ],
         ];
     }
@@ -73,18 +73,18 @@ class Plugin extends PluginBase
     {
         return [
             'apparatus' => [
-                'label'       => 'keios.apparatus::lang.labels.apparatus',
-                'url'         => Backend::url('keios/apparatus/jobs'),
+                'label'       => 'golem15.apparatus::lang.labels.apparatus',
+                'url'         => Backend::url('golem15/apparatus/jobs'),
                 'icon'        => 'icon-gears',
-                'iconSvg'     => 'plugins/keios/apparatus/assets/img/gear.svg',
+                'iconSvg'     => 'plugins/golem15/apparatus/assets/img/gear.svg',
                 'order'       => 500,
-                'permissions' => ['keios.apparatus.*'],
+                'permissions' => ['golem15.apparatus.*'],
                 'sideMenu'    => [
                     'jobs' => [
-                        'label'       => 'keios.apparatus::lang.labels.jobs',
+                        'label'       => 'golem15.apparatus::lang.labels.jobs',
                         'icon'        => 'icon-gears',
-                        'url'         => Backend::url('keios/apparatus/jobs'),
-                        'permissions' => ['keios.apparatus.access_jobs'],
+                        'url'         => Backend::url('golem15/apparatus/jobs'),
+                        'permissions' => ['golem15.apparatus.access_jobs'],
                     ],
                 ],
             ],
@@ -98,12 +98,12 @@ class Plugin extends PluginBase
     {
         return [
             'messaging' => [
-                'label'       => 'keios.apparatus::lang.settings.messaging-label',
-                'description' => 'keios.apparatus::lang.settings.messaging-description',
+                'label'       => 'golem15.apparatus::lang.settings.messaging-label',
+                'description' => 'golem15.apparatus::lang.settings.messaging-description',
                 'category'    => 'Apparatus',
                 'icon'        => 'icon-globe',
                 'class'       => Models\Settings::class,
-                'permissions' => ['keios.apparatus.access_settings'],
+                'permissions' => ['golem15.apparatus.access_settings'],
                 'order'       => 500,
                 'keywords'    => 'messages flash notifications',
             ],
@@ -164,7 +164,7 @@ class Plugin extends PluginBase
     {
         return [
             KnobWidget::class => [
-                'label' => 'keios.apparatus::lang.labels.knobFormWidget',
+                'label' => 'golem15.apparatus::lang.labels.knobFormWidget',
                 'code' => 'knob'
             ]
         ];
@@ -201,7 +201,7 @@ class Plugin extends PluginBase
         $aliasLoader->alias('Resolver', Facades\Resolver::class);
 
         $injector = $this->app->make('apparatus.backend.injector');
-        $injector->addCss('/plugins/keios/apparatus/assets/css/animate.css');
+        $injector->addCss('/plugins/golem15/apparatus/assets/css/animate.css');
 
         Event::listen(
             'backend.list.extendColumns',

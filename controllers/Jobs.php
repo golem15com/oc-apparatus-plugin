@@ -1,12 +1,12 @@
-<?php namespace Keios\Apparatus\Controllers;
+<?php namespace Golem15\Apparatus\Controllers;
 
 use BackendMenu;
 use Backend\Classes\Controller;
 use Flash;
 use Illuminate\Http\RedirectResponse;
-use Keios\Apparatus\Contracts\JobStatus;
+use Golem15\Apparatus\Contracts\JobStatus;
 use Lang;
-use Keios\Apparatus\Models\Job;
+use Golem15\Apparatus\Models\Job;
 use Redirect;
 use Request;
 
@@ -38,7 +38,7 @@ class Jobs extends Controller
     public function __construct()
     {
         parent::__construct();
-        BackendMenu::setContext('Keios.Apparatus', 'apparatus', 'jobs');
+        BackendMenu::setContext('Golem15.Apparatus', 'apparatus', 'jobs');
     }
 
     /**
@@ -46,7 +46,7 @@ class Jobs extends Controller
      */
     public function index(): void
     {
-        $this->addJs('/plugins/keios/apparatus/assets/js/apparatus-jobs.js');
+        $this->addJs('/plugins/golem15/apparatus/assets/js/apparatus-jobs.js');
 
         $this->asExtension('ListController')->index();
     }
@@ -65,7 +65,7 @@ class Jobs extends Controller
             $this->pageTitle = 'Job not found.';
             $this->fatalError = sprintf('Job with id .'.$id.' does not exist.');
         } else {
-            $this->addJs('/plugins/keios/apparatus/assets/js/apparatus-jobs.js');
+            $this->addJs('/plugins/golem15/apparatus/assets/js/apparatus-jobs.js');
             $this->pageTitle = 'Job '.$id.' - '.$job->label;
             $this->vars['job'] = $job;
         }
@@ -93,9 +93,9 @@ class Jobs extends Controller
                 $job->delete();
             }
 
-            Flash::success(Lang::get('keios.apparatus::lang.jobs.delete_selected_success'));
+            Flash::success(Lang::get('golem15.apparatus::lang.jobs.delete_selected_success'));
         } else {
-            Flash::error(Lang::get('keios.apparatus::lang.jobs.delete_selected_empty'));
+            Flash::error(Lang::get('golem15.apparatus::lang.jobs.delete_selected_empty'));
         }
 
         return $this->listRefresh();

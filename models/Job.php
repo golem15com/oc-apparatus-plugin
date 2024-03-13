@@ -1,4 +1,4 @@
-<?php namespace Keios\Apparatus\Models;
+<?php namespace Golem15\Apparatus\Models;
 
 use Model;
 
@@ -10,7 +10,7 @@ class Job extends Model
     /**
      * @var string The database table used by the model.
      */
-    public $table = 'keios_apparatus_jobs';
+    public $table = 'golem15_apparatus_jobs';
 
     /**
      * @var array Guarded fields
@@ -43,17 +43,17 @@ class Job extends Model
     {
         $statusId = $this->status;
         $translations = [
-            0 => trans('keios.apparatus::lang.jobs.in_queue'),
-            1 => trans('keios.apparatus::lang.jobs.in_progress'),
-            2 => trans('keios.apparatus::lang.jobs.complete'),
-            3 => trans('keios.apparatus::lang.jobs.error'),
-            4 => trans('keios.apparatus::lang.jobs.stopped'),
+            0 => trans('golem15.apparatus::lang.jobs.in_queue'),
+            1 => trans('golem15.apparatus::lang.jobs.in_progress'),
+            2 => trans('golem15.apparatus::lang.jobs.complete'),
+            3 => trans('golem15.apparatus::lang.jobs.error'),
+            4 => trans('golem15.apparatus::lang.jobs.stopped'),
         ];
         if (array_key_exists($statusId, $translations)) {
             return $translations[$statusId];
         }
 
-        return trans('keios.apparatus::lang.jobs.unknown');
+        return trans('golem15.apparatus::lang.jobs.unknown');
     }
 
     /**

@@ -227,16 +227,16 @@
             "time": "2016-12-03 18:49:20"
         },
         {
-            "name": "keios/apparatus",
+            "name": "golem15/apparatus",
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/keiosweb/apparatus.git",
+                "url": "https://github.com/golem15web/apparatus.git",
                 "reference": "083e8893a8641a3ef52a713d57a6287551850de7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/keiosweb/apparatus/zipball/083e8893a8641a3ef52a713d57a6287551850de7",
+                "url": "https://api.github.com/repos/golem15web/apparatus/zipball/083e8893a8641a3ef52a713d57a6287551850de7",
                 "reference": "083e8893a8641a3ef52a713d57a6287551850de7",
                 "shasum": ""
             },
@@ -256,7 +256,7 @@
             },
             "autoload": {
                 "psr-4": {
-                    "Keios\\Apparatus\\": "src"
+                    "Golem15\\Apparatus\\": "src"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -264,7 +264,7 @@
                 {
                     "name": "Łukasz Biały",
                     "email": "lukasz@c-call.eu",
-                    "homepage": "http://keios.eu",
+                    "homepage": "http://golem15.eu",
                     "role": "Developer"
                 }
             ],
@@ -272,21 +272,21 @@
             "keywords": [
                 "apparatus",
                 "business logic",
-                "keios"
+                "golem15"
             ],
             "time": "2015-03-10 21:08:51"
         },
         {
-            "name": "keios/laravel-apparatus",
+            "name": "golem15/laravel-apparatus",
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://keiosweb@bitbucket.org/keiosdevs/laravel-apparatus.git",
+                "url": "https://golem15web@bitbucket.org/golem15devs/laravel-apparatus.git",
                 "reference": "93e2ae721d997dbb0f2a9eb5746e4cb6378d4355"
             },
             "require": {
                 "illuminate/support": "5.1.*",
-                "keios/apparatus": "1.0.*@dev",
+                "golem15/apparatus": "1.0.*@dev",
                 "php": ">=5.4.0"
             },
             "type": "library",
@@ -297,22 +297,22 @@
             },
             "autoload": {
                 "psr-4": {
-                    "Keios\\LaravelApparatus\\": "src"
+                    "Golem15\\LaravelApparatus\\": "src"
                 }
             },
             "authors": [
                 {
                     "name": "Łukasz Biały",
                     "email": "lukasz@c-call.eu",
-                    "homepage": "http://keios.eu",
+                    "homepage": "http://golem15.eu",
                     "role": "Developer"
                 }
             ],
-            "description": "Laravel wrapper for Keios/Apparatus",
+            "description": "Laravel wrapper for Golem15/Apparatus",
             "keywords": [
                 "apparatus",
                 "business logic",
-                "keios",
+                "golem15",
                 "laravel"
             ],
             "time": "2016-09-05 08:32:02"
@@ -370,7 +370,7 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "keios/laravel-apparatus": 20
+        "golem15/laravel-apparatus": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

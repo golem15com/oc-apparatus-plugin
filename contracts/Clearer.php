@@ -1,4 +1,4 @@
-<?php namespace Keios\Apparatus\Contracts;
+<?php namespace Golem15\Apparatus\Contracts;
 
 use Illuminate\Contracts\Queue\Factory as FactoryContract;
 

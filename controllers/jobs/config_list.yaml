@@ -3,16 +3,16 @@
 # ===================================
 
 # Model List Column configuration
-list: $/keios/apparatus/models/job/columns.yaml
+list: $/golem15/apparatus/models/job/columns.yaml
 
 # Model Class name
-modelClass: Keios\Apparatus\Models\Job
+modelClass: Golem15\Apparatus\Models\Job
 
 # List Title
-title: keios.apparatus::lang.job.list_title
+title: golem15.apparatus::lang.job.list_title
 
 # Link URL for each record
-recordUrl: keios/apparatus/jobs/view/:id
+recordUrl: golem15/apparatus/jobs/view/:id
 
 # Message to display if the list is empty
 noRecordsMessage: backend::lang.list.no_records

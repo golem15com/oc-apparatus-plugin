@@ -2,19 +2,19 @@
 /**
  * Created by PhpStorm.
  * User: Łukasz Biały
- * URL: http://keios.eu
+ * URL: http://golem15.eu
  * Date: 8/13/15
  * Time: 2:17 AM
  */
 
-namespace Keios\Apparatus\Console;
+namespace Golem15\Apparatus\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Database\Schema\Blueprint;
 
 /**
  * Class Optimize
- * @package Keios\Apparatus\Console
+ * @package Golem15\Apparatus\Console
  */
 class Optimize extends Command
 {

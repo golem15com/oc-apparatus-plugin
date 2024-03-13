@@ -6,7 +6,7 @@
  * Time: 10:17 AM
  */
 
-namespace Keios\Apparatus\Contracts;
+namespace Golem15\Apparatus\Contracts;
 
 interface ApparatusQueueJob
 {

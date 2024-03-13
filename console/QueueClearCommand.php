@@ -1,10 +1,10 @@
-<?php namespace Keios\Apparatus\Console;
+<?php namespace Golem15\Apparatus\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Queue\QueueManager;
-use Keios\Apparatus\Classes\Clearer;
-use Keios\Apparatus\Contracts\Clearer as ClearerContract;
+use Golem15\Apparatus\Classes\Clearer;
+use Golem15\Apparatus\Contracts\Clearer as ClearerContract;
 use Symfony\Component\Console\Input\InputArgument;
 
 class QueueClearCommand extends Command

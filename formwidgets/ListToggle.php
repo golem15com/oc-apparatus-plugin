@@ -1,6 +1,6 @@
 <?php
 
-namespace Keios\Apparatus\FormWidgets;
+namespace Golem15\Apparatus\FormWidgets;
 
 use Backend\Classes\ListColumn;
 use Lang;
@@ -9,7 +9,7 @@ use Model;
 /**
  * Class ListToggle based on Inetis ListSwitch MIT OctoberCMS Plugin
  *
- * @package Keios\Apparatus\FormWidgets
+ * @package Golem15\Apparatus\FormWidgets
  */
 class ListToggle
 {
@@ -20,10 +20,10 @@ class ListToggle
      */
     private static $defaultFieldConfig = [
         'icon'       => true,
-        'titleTrue'  => 'keios.apparatus::lang.listtoggle.title_true',
-        'titleFalse' => 'keios.apparatus::lang.listtoggle.title_false',
-        'textTrue'   => 'keios.apparatus::lang.listtoggle.text_true',
-        'textFalse'  => 'keios.apparatus::lang.listtoggle.text_false',
+        'titleTrue'  => 'golem15.apparatus::lang.listtoggle.title_true',
+        'titleFalse' => 'golem15.apparatus::lang.listtoggle.title_false',
+        'textTrue'   => 'golem15.apparatus::lang.listtoggle.text_true',
+        'textFalse'  => 'golem15.apparatus::lang.listtoggle.text_false',
         'request'    => 'onSwitchInetisListField',
         'readOnly'   => false,
     ];

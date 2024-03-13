@@ -1,7 +1,7 @@
-<?php namespace Keios\Apparatus\Classes;
+<?php namespace Golem15\Apparatus\Classes;
 
 use Illuminate\Support\ServiceProvider;
-use Keios\Apparatus\Contracts\Clearer;
+use Golem15\Apparatus\Contracts\Clearer;
 
 class LaravelQueueClearServiceProvider extends ServiceProvider
 {
@@ -21,9 +21,9 @@ class LaravelQueueClearServiceProvider extends ServiceProvider
     {
         $this->app->bind(
             Clearer::class,
-            \Keios\Apparatus\Classes\Clearer::class
+            \Golem15\Apparatus\Classes\Clearer::class
         );
-        $this->commands('Keios\Apparatus\Console\QueueClearCommand');
+        $this->commands('Golem15\Apparatus\Console\QueueClearCommand');
     }
 
     /**

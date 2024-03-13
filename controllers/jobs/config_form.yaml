@@ -3,29 +3,29 @@
 # ===================================
 
 # Record name
-name: keios.apparatus::lang.job.label
+name: golem15.apparatus::lang.job.label
 
 # Model Form Field configuration
-form: $/keios/apparatus/models/job/fields.yaml
+form: $/golem15/apparatus/models/job/fields.yaml
 
 # Model Class name
-modelClass: Keios\Apparatus\Models\Job
+modelClass: Golem15\Apparatus\Models\Job
 
 # Default redirect location
-defaultRedirect: keios/apparatus/jobs
+defaultRedirect: golem15/apparatus/jobs
 
 # Create page
 create:
-    title: keios.apparatus::lang.job.create_title
-    redirect: keios/apparatus/jobs/update/:id
-    redirectClose: keios/apparatus/jobs
+    title: golem15.apparatus::lang.job.create_title
+    redirect: golem15/apparatus/jobs/update/:id
+    redirectClose: golem15/apparatus/jobs
 
 # Update page
 update:
-    title: keios.apparatus::lang.job.update_title
-    redirect: keios/apparatus/jobs
-    redirectClose: keios/apparatus/jobs
+    title: golem15.apparatus::lang.job.update_title
+    redirect: golem15/apparatus/jobs
+    redirectClose: golem15/apparatus/jobs
 
 # Preview page
 preview:
-    title: keios.apparatus::lang.job.preview_title
+    title: golem15.apparatus::lang.job.preview_title

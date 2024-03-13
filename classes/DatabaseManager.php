@@ -6,7 +6,7 @@
  * Time: 5:36 PM
  */
 
-namespace Keios\Apparatus\Classes;
+namespace Golem15\Apparatus\Classes;
 
 use October\Rain\Database\Connectors\ConnectionFactory;
 use October\Rain\Foundation\Application;

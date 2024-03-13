@@ -1,11 +1,11 @@
-<?php namespace Keios\Apparatus\Classes;
+<?php namespace Golem15\Apparatus\Classes;
 
 use Cms\Classes\ComponentBase;
 
 /**
  * Class FormComponent
  *
- * @package Keios\Apparatus\Classes
+ * @package Golem15\Apparatus\Classes
  */
 abstract class FormComponent extends ComponentBase
 {

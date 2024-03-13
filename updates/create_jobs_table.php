@@ -1,4 +1,4 @@
-<?php namespace Keios\Apparatus\Updates;
+<?php namespace Golem15\Apparatus\Updates;
 
 use Schema;
 use October\Rain\Database\Schema\Blueprint;
@@ -8,7 +8,7 @@ class CreateJobsTable extends Migration
 {
     public function up()
     {
-        Schema::create('keios_apparatus_jobs', function(Blueprint $table) {
+        Schema::create('golem15_apparatus_jobs', function(Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->increments('id');
             $table->string('label');
@@ -25,6 +25,6 @@ class CreateJobsTable extends Migration
 
     public function down()
     {
-        Schema::dropIfExists('keios_apparatus_jobs');
+        Schema::dropIfExists('golem15_apparatus_jobs');
     }
 }

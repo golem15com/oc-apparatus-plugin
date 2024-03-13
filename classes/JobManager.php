@@ -6,21 +6,21 @@
  * Time: 9:55 AM
  */
 
-namespace Keios\Apparatus\Classes;
+namespace Golem15\Apparatus\Classes;
 
-use Keios\Apparatus\Contracts\ApparatusQueueJob;
-use Keios\Apparatus\Contracts\JobStatus;
+use Golem15\Apparatus\Contracts\ApparatusQueueJob;
+use Golem15\Apparatus\Contracts\JobStatus;
 use Carbon\Carbon;
 use Illuminate\Contracts\Queue\Queue;
 use Illuminate\Database\Connection;
 
 /**
  * Class JobManager
- * @package Keios\Apparatus\Classes
+ * @package Golem15\Apparatus\Classes
  */
 class JobManager
 {
-    const JOB_TABLE = 'keios_apparatus_jobs';
+    const JOB_TABLE = 'golem15_apparatus_jobs';
 
     /**
      * @var Connection

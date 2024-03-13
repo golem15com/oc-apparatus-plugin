@@ -1,8 +1,8 @@
-<?php namespace Keios\Apparatus\Classes;
+<?php namespace Golem15\Apparatus\Classes;
 
 use Illuminate\Queue\QueueManager;
 use Illuminate\Contracts\Queue\Factory as FactoryContract;
-use Keios\Apparatus\Contracts\Clearer as ClearerContract;
+use Golem15\Apparatus\Contracts\Clearer as ClearerContract;
 
 class Clearer implements ClearerContract
 {

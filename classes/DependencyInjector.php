@@ -1,13 +1,13 @@
-<?php namespace Keios\Apparatus\Classes;
+<?php namespace Golem15\Apparatus\Classes;
 
 use Illuminate\Contracts\Container\Container;
-use Keios\Apparatus\Contracts\NeedsDependencies;
+use Golem15\Apparatus\Contracts\NeedsDependencies;
 use October\Rain\Exception\ApplicationException;
 
 /**
  * Class DependencyInjector
  *
- * @package Keios\Apparatus\Classes
+ * @package Golem15\Apparatus\Classes
  */
 class DependencyInjector
 {

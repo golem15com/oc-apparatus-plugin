@@ -2,12 +2,12 @@
 /**
  * Created by PhpStorm.
  * User: Łukasz Biały
- * URL: http://keios.eu
+ * URL: http://golem15.eu
  * Date: 6/13/15
  * Time: 6:20 AM
  */
 
-namespace Keios\Apparatus\Classes;
+namespace Golem15\Apparatus\Classes;
 
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -18,7 +18,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 /**
  * Class TranslApiController
  *
- * @package Keios\Apparatus\Classes
+ * @package Golem15\Apparatus\Classes
  */
 class TranslApiController extends Controller
 {

@@ -21,18 +21,18 @@
  * Time: 4:43 PM
  */
 
-namespace Keios\Apparatus\Jobs;
+namespace Golem15\Apparatus\Jobs;
 
-use Keios\Apparatus\Classes\JobManager;
-use Keios\Apparatus\Classes\RequestSender;
-use Keios\Apparatus\Contracts\ApparatusQueueJob;
+use Golem15\Apparatus\Classes\JobManager;
+use Golem15\Apparatus\Classes\RequestSender;
+use Golem15\Apparatus\Contracts\ApparatusQueueJob;
 
 /**
  * Class SendRequestJob
  *
  * Sends POST requests with given data to multiple target urls. Example of Apparatus Job.
  *
- * @package Keios\Apparatus\Jobs
+ * @package Golem15\Apparatus\Jobs
  */
 class SendRequestJob implements ApparatusQueueJob
 {

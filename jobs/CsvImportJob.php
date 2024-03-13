@@ -23,9 +23,9 @@
 
 namespace Viamage\CallbackManager\Classes;
 
-use Keios\Apparatus\Classes\JobManager;
-use Keios\Apparatus\Classes\RequestSender;
-use Keios\Apparatus\Contracts\ApparatusQueueJob;
+use Golem15\Apparatus\Classes\JobManager;
+use Golem15\Apparatus\Classes\RequestSender;
+use Golem15\Apparatus\Contracts\ApparatusQueueJob;
 use October\Rain\Database\Model;
 use Viamage\CallbackManager\Models\Rate;
 
@@ -34,7 +34,7 @@ use Viamage\CallbackManager\Models\Rate;
  *
  * Sends POST requests with given data to multiple target urls. Example of Apparatus Job.
  *
- * @package Keios\Apparatus\Jobs
+ * @package Golem15\Apparatus\Jobs
  */
 class CsvImportJob implements ApparatusQueueJob
 {

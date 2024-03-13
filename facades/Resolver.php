@@ -1,11 +1,11 @@
-<?php namespace Keios\Apparatus\Facades;
+<?php namespace Golem15\Apparatus\Facades;
 
 use October\Rain\Support\Facade;
 
 /**
  * Class Resolver
  *
- * @package Keios\Apparatus\Facades
+ * @package Golem15\Apparatus\Facades
  */
 class Resolver extends Facade
 {

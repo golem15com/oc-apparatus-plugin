@@ -1,9 +1,9 @@
-<?php namespace Keios\Apparatus\Contracts;
+<?php namespace Golem15\Apparatus\Contracts;
 
 /**
  * Interface ApparatusEventSource
  *
- * @package Keios\Apparatus\Contracts
+ * @package Golem15\Apparatus\Contracts
  */
 interface ApparatusEventSource
 {

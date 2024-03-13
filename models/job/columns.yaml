@@ -12,7 +12,7 @@ columns:
     progress:
         label: Progress
         type: partial
-        path: $/keios/apparatus/controllers/jobs/_list_progress.htm
+        path: $/golem15/apparatus/controllers/jobs/_list_progress.htm
         sortable: false
     is_canceled:
         label: Canceled
@@ -27,7 +27,7 @@ columns:
     status:
         label: Status
         type: partial
-        path: $/keios/apparatus/controllers/jobs/_list_status.htm
+        path: $/golem15/apparatus/controllers/jobs/_list_status.htm
     created_at:
         label: Started at
         type: datetime
