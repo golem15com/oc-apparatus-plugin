@@ -67,4 +67,8 @@ return [
         'text_true'   => 'Włączone',
         'text_false'  => 'Wyłączone',
     ],
+    'generations' => [
+      'posts_generation_from_concepts' => 'Generowanie postów z koncepcji: :value',
+      'posts_generation_from_posts' => 'Generowanie postów :value',
+    ],
 ];

@@ -69,4 +69,7 @@ return [
         'text_true'   => 'Enabled',
         'text_false'  => 'Disabled',
     ],
+    'generations' => [
+        'posts_generation_from_concepts' => 'Post Generation from concepts :value',
+    ],
 ];
