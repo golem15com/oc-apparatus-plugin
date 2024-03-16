@@ -115,6 +115,45 @@ class RequestSender
         ];
     }
 
+    public function downloadFile(array $data, string $url, $ignoreSsl = false)
+    {
+        $error = false;
+        $ch = curl_init();
+        $query = http_build_query($data);
+        if ($query) {
+            $url .= '?'.$query;
+        }
+        $parsedUrl = parse_url($url);
+        $path = $parsedUrl['path'];
+        $fileName = basename($path);
+        $saveLocation = storage_path('app/uploads/private/'.$fileName);
+        $fp = fopen($saveLocation, 'wb');
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
+        //curl_setopt($ch, CURLOPT_POSTFIELDS, $requestData);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_FILE, $fp);
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+        if ($ignoreSsl){
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        }
+        $content = curl_exec($ch);
+        if (curl_errno($ch)) {
+            $error = curl_error($ch);
+        }
+
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        return [
+            'code'    => $httpCode,
+            'content' => $saveLocation,
+            'error'   => $error,
+        ];
+    }
+
     public function addHeader($header)
     {
         $this->headers[] = $header;
