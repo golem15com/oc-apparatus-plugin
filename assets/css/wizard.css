@@ -1,0 +1,49 @@
+.wizard {
+    border: 1px solid #00000029;
+    background-color: #1473a5;
+    min-height: 360px;
+    padding: 20px;
+}
+
+.wizard-title {
+    color : #fff;
+    font-size: 1.2em;
+    margin-top: 0px;
+}
+
+.wizard label {
+    color: rgba(255, 255, 255, 0.61);
+}
+
+.wizard-button-container {
+    display: flex;
+}
+.wizard-button {
+    position: absolute;
+    bottom: -35px;
+    left:10px;
+}
+
+.wizard-illustration {
+    max-width: 50%;
+    margin: 0 auto;
+}
+
+.fancy-border-1 {
+    border-radius: 71% 29% 44% 56% / 30% 37% 63% 70%;
+}
+.fancy-border-2 {
+    border-radius: 31% 69% 49% 51% / 86% 37% 63% 14%; 
+}
+
+.fancy-border-3 {
+    border-radius: 75% 25% 49% 51% / 53% 63% 37% 47%;
+}
+
+.fancy-border-4 {
+    border-radius: 63% 37% 25% 75% / 53% 63% 37% 47%; 
+}
+
+.fancy-border-5 {
+    border-radius: 72% 28% 75% 25% / 39% 63% 37% 61%; 
+}
