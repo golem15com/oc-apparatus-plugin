@@ -116,13 +116,16 @@ class JobManager
      * @param int $id
      * @param int $currentItem
      */
-    public function updateJobState(int $id, int $currentItem): void
+    public function updateJobState(int $id, int $currentItem, array $metadata = []): void
     {
         $this->db->table(self::JOB_TABLE)->where('id', $id)->update(
             [
                 'progress' => $currentItem,
             ]
         );
+        if ($metadata) {
+            $this->updateMetadata($id, $metadata);
+        }
     }
 
     /**
