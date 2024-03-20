@@ -5,6 +5,7 @@ use Backend\Classes\Controller;
 use Cms\Classes\ComponentBase;
 use Event;
 use Flash;
+use Golem15\Apparatus\Console\SaneGitModules;
 use Illuminate\Foundation\AliasLoader;
 use Golem15\Apparatus\Classes\BackendInjector;
 use Golem15\Apparatus\Classes\DependencyInjector;
@@ -120,6 +121,7 @@ class Plugin extends PluginBase
             [
                 Optimize::class,
                 QueueClearCommand::class,
+                SaneGitModules::class
             ]
         );
 
