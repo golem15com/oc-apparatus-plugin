@@ -99,6 +99,84 @@ class RouteResolver
     }
 
     /**
+     * @param string $component
+     *
+     * @return string|null
+     * @throws \ApplicationException
+     * @throws \Exception
+     */
+    public function resolvePageForUrl(string $url): ?Page
+    {
+        $url = '/' . ltrim($url, '/');
+        $page = Page::where('url', $url)->first();
+        if ($page) {
+            return $page;
+        }
+
+        // Manually fetch all pages and iterate to find a match
+        // Note: Consider optimizing this if you have a large number of pages
+        $pages = Page::all();
+        foreach ($pages as $page) {
+            if ($this->urlMatchesPattern($url, $page->url)) {
+                return $page;
+            }
+        }
+
+        // Return null if no page matches the dynamic pattern
+        return null;
+    }
+
+    /**
+     * Check if the given URL matches a defined URL pattern.
+     * Adjust the logic here based on your actual URL patterns and requirements.
+     * Example patterns will be:
+     * /blog
+     * /
+     * /blog/:category/:post
+     * /user/:slug
+     * /blog/:category
+     *
+     * Example $url will be
+     * /blog
+     * /
+     * /blog/technology/why-laravel-is-awesome
+     * /user/john-doe
+     * /blog/technology
+     */
+    protected function urlMatchesPattern(string $url, string $pattern): bool
+    {
+        // If the URL and pattern are an exact match, return true
+        if ($url === $pattern) {
+            return true;
+        }
+
+        // If the pattern has no dynamic parts, return false
+        if (strpos($pattern, '/:') === false) {
+            return false;
+        }
+
+        // If the pattern has dynamic parts, extract them and compare
+        $patternParts = explode('/', $pattern);
+        $urlParts = explode('/', $url);
+
+        // If the number of parts don't match, return false
+        if (count($patternParts) !== count($urlParts)) {
+            return false;
+        }
+
+        // Iterate through the parts and compare
+        foreach ($patternParts as $index => $part) {
+            if (strpos($part, ':') === false) {
+                if ($part !== $urlParts[$index]) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * @param string $url
      *
      * @return string
@@ -184,7 +262,7 @@ class RouteResolver
         }
 
         if (strpos($url, ':') !== false) {
-            return preg_replace('/\\:('.$parameterValue.')\\??/', $value, $url, -1);
+            return preg_replace('/\\:(' . $parameterValue . ')\\??/', $value, $url, -1);
         }
 
         return null;
