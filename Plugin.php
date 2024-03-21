@@ -78,7 +78,7 @@ class Plugin extends PluginBase
                 'url'         => Backend::url('golem15/apparatus/jobs'),
                 'icon'        => 'icon-gears',
                 'iconSvg'     => 'plugins/golem15/apparatus/assets/img/gear.svg',
-                'order'       => 500,
+                'order'       => 700,
                 'permissions' => ['golem15.apparatus.*'],
                 'sideMenu'    => [
                     'jobs' => [
