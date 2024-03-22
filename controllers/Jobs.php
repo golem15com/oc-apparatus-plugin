@@ -108,19 +108,19 @@ class Jobs extends Controller
     {
         $ids = post('ids');
         $jobs = Job::whereIn('id', $ids)
-            ->select(['id', 'status', 'progress', 'progress_max'])
-            ->get()
-            ->map(
-                function (Job $job) {
-                    $stdClass = (object)$job->attributes;
-                    $stdClass->statusCode = $job->status;
-                    $stdClass->status = $job->getStatus();
-                    $stdClass->percent = $job->progressPercent();
-
-                    return $stdClass;
-                }
-            )
-            ->toArray();
+            ->get();
+           // ->map(
+           //     function (Job $job) {
+           //         $stdClass = (object)$job->attributes;
+           //         $stdClass->statusCode = $job->status;
+           //         $stdClass->status = $job->getStatus();
+           //         $stdClass->percent = $job->progressPercent();
+           //         $stdClass->metadata = $job->getMetadata();
+//
+           //         return $stdClass;
+           //     }
+           // );
+        $this->vars['job'] = $jobs->first();
 
         return [
             'jobs' => $jobs,

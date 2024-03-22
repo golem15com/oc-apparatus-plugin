@@ -1,0 +1,26 @@
+<h4>Metadata</h4>
+<table class="table">
+    <thead>
+    <tr>
+        <td style="width: 180px;">Key</td>
+        <td>Value</td>
+    </tr>
+    </thead>
+    <tbody>
+    <?php foreach($job->getMetadata() as $key => $value) { ?>
+    <tr>
+        <td><?= $key ?></td>
+        <?php if(is_array($value)) { ?>
+        <td>
+            <pre><?= json_encode($value, JSON_PRETTY_PRINT) ?></pre>
+        </td>
+        <?php } else { ?>
+        <?php if(str_contains($value, 'http')) { ?>
+        <td><a href="<?= $value ?>"><?= $value ?></a></td>
+        <?php } else { ?>
+        <td><?= $value ?></td>
+        <?php }} ?>
+    </tr>
+    <?php } ?>
+    </tbody>
+</table>

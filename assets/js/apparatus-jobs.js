@@ -17,13 +17,11 @@ $(function () {
     }
 
     function setCurrentProgress(data) {
+        $('#metadata').html(data.metadata);
         data.jobs.forEach(function (job) {
             var $status = $('[data-job-id="' + job.id + '"]');
             var $bar = $('[data-job-progress="' + job.id + '"]');
             var $text = $('[data-job-progress-text="' + job.id + '"]');
-
-            //$status.html(job.status);
-
             if (job.percent == 100 || job.statusCode > 1) {
                 $bar.parent().remove();
                 $text.parent().remove();
@@ -41,9 +39,20 @@ $(function () {
 
     function refreshProgress() {
         var allJobElements = getAllVisibleJobsElems();
+        console.log('JOBS: ', allJobElements.length);
         var jobsRequiringUpdate = mapJobsElemsToJobIds(filterOnlyChangeableJobsElems(allJobElements)).toArray();
+        console.log('JOBS REQUIRING UPDATE: ', jobsRequiringUpdate.length)
         if (jobsRequiringUpdate.length > 0) {
-            $.request('onGetProgress', {data: {ids: jobsRequiringUpdate}, success: setCurrentProgress});
+            $.request('onGetProgress', {data: {
+                ids: jobsRequiringUpdate
+                },
+                update: {
+                    'metadata': '#metadata'
+                },
+                success: function(r){
+                    setCurrentProgress(r);
+                    this.success(r);
+                }});
         }
 
         allJobElements.toArray().forEach(function (jobElem) {
