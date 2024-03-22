@@ -2,6 +2,8 @@
     <div class="progress-bar" role="progressbar"
          aria-valuenow="<?= $record->progress ?>"
          data-job-progress="<?= $record->id ?>"
+         data-job-status="<?= $record->status ?>"
+         data-job-id="<?= $record->id ?>"
          aria-valuemin="0"
          aria-valuemax="<?= $record->progress_max ?>"
          style="width: <?= $record->progressPercent() ?>%">
