@@ -5,6 +5,7 @@ use Backend\Classes\Controller;
 use Cms\Classes\ComponentBase;
 use Event;
 use Flash;
+use Golem15\Apparatus\Console\FakeJob;
 use Golem15\Apparatus\Console\SaneGitModules;
 use Illuminate\Foundation\AliasLoader;
 use Golem15\Apparatus\Classes\BackendInjector;
@@ -18,6 +19,7 @@ use System\Classes\PluginBase;
 use Keios\LaravelApparatus\LaravelApparatusServiceProvider;
 use October\Rain\Translation\Translator;
 use Golem15\Apparatus\FormWidgets\KnobWidget;
+use Intervention\Image\ImageServiceProvider;
 
 /**
  * Apparatus Plugin Information File
@@ -117,11 +119,13 @@ class Plugin extends PluginBase
     public function register(): void
     {
         $this->app->register(LaravelQueueClearServiceProvider::class);
+        $this->app->register(ImageServiceProvider::class);
         $this->commands(
             [
                 Optimize::class,
                 QueueClearCommand::class,
-                SaneGitModules::class
+                SaneGitModules::class,
+                FakeJob::class
             ]
         );
 
