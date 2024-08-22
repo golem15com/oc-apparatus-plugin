@@ -1,6 +1,6 @@
 # Apparatus Plugin #
 
-Apparatus is a set of tools for OctoberCMS. Requires PHP7.1
+Apparatus is a set of tools for OctoberCMS. Requires PHP8.3
 
 ### Functionalities ###
 
