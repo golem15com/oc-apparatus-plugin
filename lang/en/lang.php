@@ -12,6 +12,19 @@ return [
         'pageWithComponentNotFound' => 'Component %s is not bound to any page in CMS.',
         'parameterNotFound' => 'Parameter %s was not found in component %s configuration.',
     ],
+    'human' => [
+        'date' => [
+            'today' => 'Today at :time',
+            'tomorrow' => 'Tomorrow at :time',
+            'this_week' => ':day at :time',
+            'next_week' => ':day next week',
+            'in_weeks' => 'In :count weeks',
+            'in_months' => 'In :count months',
+            'next_year' => 'Next year',
+            'in_years' => 'In :count years',
+            'exact_date' => ':day, :date :time'
+        ],
+    ],
     'settings' => [
         'messaging-label' => 'Notifications',
         'messaging-description' => 'Provides notifications messages engine',

@@ -55,4 +55,17 @@ return [
         'access_settings' => 'Accès aux paramètres',
         'access_jobs' => 'Accès aux emplois',
     ],
+    'human' => [
+        'date' => [
+            'today' => 'golem15.apparatus::lang.human.date.today',
+            'tomorrow' => 'golem15.apparatus::lang.human.date.tomorrow',
+            'this_week' => 'golem15.apparatus::lang.human.date.this_week',
+            'next_week' => 'golem15.apparatus::lang.human.date.next_week',
+            'in_weeks' => 'golem15.apparatus::lang.human.date.in_weeks',
+            'in_months' => 'golem15.apparatus::lang.human.date.in_months',
+            'next_year' => 'golem15.apparatus::lang.human.date.next_year',
+            'in_years' => 'golem15.apparatus::lang.human.date.in_years',
+            'exact_date' => 'golem15.apparatus::lang.human.date.exact_date',
+        ],
+    ],
 ];

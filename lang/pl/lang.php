@@ -12,6 +12,19 @@ return [
         'pageWithComponentNotFound' => 'Komponent %s nie jest przydzielony do żadnej strony CMS.',
         'parameterNotFound' => 'Parametr %s nie został znaleziony w konfiguracji komponentu %s.',
     ],
+    'human' => [
+        'date' => [
+            'today' => 'Dziś o :time',
+            'tomorrow' => 'Jutro o :time',
+            'this_week' => ':day o :time',
+            'next_week' => ':day w przyszłym tygodniu',
+            'in_weeks' => ':count+ tygodni',
+            'in_months' => ':count+ miesięcy',
+            'next_year' => 'W przyszłym roku',
+            'in_years' => ':count+ lat',
+            'exact_date' => ':day, :date :time',
+        ],
+    ],
     'settings' => [
         'messaging-label' => 'Wiadomości',
         'messaging-description' => 'Udostępnia silnik powiadomień',

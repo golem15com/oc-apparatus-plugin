@@ -10,6 +10,7 @@ use Golem15\Apparatus\Console\SaneGitModules;
 use Illuminate\Foundation\AliasLoader;
 use Golem15\Apparatus\Classes\BackendInjector;
 use Golem15\Apparatus\Classes\DependencyInjector;
+use Golem15\Apparatus\Classes\HumanDateExtension;
 use Golem15\Apparatus\Classes\RouteResolver;
 use Golem15\Apparatus\Console\Optimize;
 use Golem15\Apparatus\FormWidgets\ListToggle;
@@ -263,5 +264,18 @@ class Plugin extends PluginBase
             }
         );
     }
+    public function registerMarkupTags()
+    {
+        return [
+            'filters' => [
+                'ucfirst' => 'ucfirst',
+                'human_date' => [$this, 'humanDateFilter'],
 
+            ]
+        ];
+    }
+
+    public function humanDateFilter($dateString) {
+        return (new HumanDateExtension())->humanDateFilter($dateString);
+    }
 }

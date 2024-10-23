@@ -20,6 +20,7 @@
   ],
   "minimum-stability": "dev",
   "require": {
-    "keios/laravel-apparatus": "dev-develop"
+    "keios/laravel-apparatus": "dev-develop",
+    "hashids/hashids": "5.0.2"
   }
 }
