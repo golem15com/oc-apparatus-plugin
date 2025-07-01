@@ -1,26 +1,27 @@
 {
-  "name": "golem15/apparatus-framework",
-  "description": "Golem15 Apparatus Application Framework library for OctoberCMS - continued Keios project.",
-  "license": "MIT",
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "https://bitbucket.org/keiosdevs/laravel-apparatus.git"
+    "name": "golem15/apparatus-framework",
+    "description": "Golem15 Apparatus Application Framework library for OctoberCMS - continued Keios project.",
+    "license": "MIT",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://bitbucket.org/keiosdevs/laravel-apparatus.git"
+        }
+    ],
+    "authors": [
+        {
+            "name": "Łukasz Biały",
+            "email": "lukasz@c-call.eu"
+        },
+        {
+            "name": "Jakub Zych",
+            "email": "jakub@golem15.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "keios/laravel-apparatus": "dev-develop",
+        "hashids/hashids": "5.0.2",
+        "intervention/image": "^2.7"
     }
-  ],
-  "authors": [
-    {
-      "name": "Łukasz Biały",
-      "email": "lukasz@c-call.eu"
-    },
-    {
-      "name": "Jakub Zych",
-      "email": "jakub@golem15.com"
-    }
-  ],
-  "minimum-stability": "dev",
-  "require": {
-    "keios/laravel-apparatus": "dev-develop",
-    "hashids/hashids": "5.0.2"
-  }
 }
