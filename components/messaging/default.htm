@@ -14,9 +14,23 @@
 {% flash %}
 {% put scripts %}
 <script type="text/javascript" language="javascript">
+    {% if __SELF__.property('snowboardMode') %}
+    // Snowboard mode - use Apparatus.messaging (set by Snowboard plugin)
+    if (typeof Snowboard !== 'undefined') {
+        Snowboard.ready(function() {
+            if (window.Apparatus && window.Apparatus.messaging) {
+                window.Apparatus.messaging.handleFlashMessage('{{ type }}', '{{ message }}');
+            } else {
+                console.error('Apparatus Messaging plugin not loaded');
+            }
+        });
+    }
+    {% else %}
+    // jQuery mode - use $.apparatus.messaging
     $(function () {
         $.apparatus.messaging.handleFlashMessage('{{ type }}', '{{ message }}');
     });
+    {% endif %}
 </script>
 {% endput %}
 {% endflash %}

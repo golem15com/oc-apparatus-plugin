@@ -42,6 +42,12 @@ class Messaging extends ComponentBase
                 'type'        => 'checkbox',
                 'default'     => true,
             ],
+            'snowboardMode' => [
+                'title'       => 'Snowboard Mode',
+                'description' => 'Use Snowboard instead of jQuery (Winter CMS)',
+                'type'        => 'checkbox',
+                'default'     => true,
+            ],
             'injectNoty' => [
                 'title'       => 'golem15.apparatus::lang.strings.inject_noty',
                 'description' => 'golem15.apparatus::lang.strings.inject_noty_desc',
@@ -70,7 +76,11 @@ class Messaging extends ComponentBase
             $this->addCss('/plugins/golem15/apparatus/assets/js/noty/noty.css');
         }
         if($this->property('injectMain')) {
-            $this->addJs('/plugins/golem15/apparatus/assets/js/framework.messaging.js');
+            if($this->property('snowboardMode')) {
+                $this->addJs('/plugins/golem15/apparatus/assets/js/snowboard.messaging.js');
+            } else {
+                $this->addJs('/plugins/golem15/apparatus/assets/js/framework.messaging.js');
+            }
         }
 
         $settings = Settings::instance()->value;
