@@ -1,0 +1,50 @@
+<!-- Global Confirmation Modal -->
+<div id="apparatus-confirm-modal" class="modal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.5); z-index: 9999; align-items: center; justify-content: center;">
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl" style="width: 90%; max-width: 500px; margin: 0 auto; animation: modalFadeIn 0.2s ease-out;">
+        <div class="p-6">
+            <!-- Header -->
+            <div class="flex items-center justify-between mb-4 pb-4 border-b border-gray-200 dark:border-gray-700">
+                <h3 class="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                    <span class="text-3xl">⚠️</span>
+                    <span>Confirm Action</span>
+                </h3>
+            </div>
+
+            <!-- Message Content -->
+            <div class="mb-6">
+                <p id="apparatus-confirm-message" class="text-lg text-gray-700 dark:text-gray-300 whitespace-pre-wrap"></p>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex items-center gap-3">
+                <button type="button"
+                        id="apparatus-confirm-cancel"
+                        class="flex-1 px-6 py-3 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
+                    Cancel
+                </button>
+                <button type="button"
+                        id="apparatus-confirm-ok"
+                        class="flex-1 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-lg font-semibold hover:shadow-lg transform hover:scale-105 transition-all">
+                    ✓ Confirm
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+#apparatus-confirm-modal {
+    backdrop-filter: blur(2px);
+}
+</style>
