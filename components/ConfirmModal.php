@@ -31,6 +31,6 @@ class ConfirmModal extends ComponentBase
     public function onRun()
     {
         // Add JavaScript for Snowboard event handler
-        $this->addJs('/plugins/golem15/apparatus/components/confirmmodal/assets/js/confirm-handler.js');
+        $this->addJs('/plugins/golem15/apparatus/assets/js/snowboard.confirm-handler.js');
     }
 }

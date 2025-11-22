@@ -92,7 +92,7 @@ class Messaging extends ComponentBase
         $this->layout = $settings['layout'];
         $this->openAnimation = $settings['openAnimation'];
         $this->closeAnimation = $settings['closeAnimation'];
-        $this->theme = $settings['theme'];
+        $this->theme = $settings['theme'] ?? 'tailwind'; // Default to tailwind
         $this->template = $settings['template'];
         $this->timeout = $settings['timeout'] * 1000;
         $this->dismissQueue = $settings['dismissQueue'];

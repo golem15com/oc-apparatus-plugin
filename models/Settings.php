@@ -118,6 +118,7 @@ class Settings extends Model
     public function getThemeOptions()
     {
         return [
+            'tailwind'     => 'tailwind',
             'bootstrap-v3' => 'bootstrap-v3',
             'bootstrap-v4' => 'bootstrap-v4',
             'metroui'      => 'metroui',
