@@ -21,6 +21,8 @@ use Keios\LaravelApparatus\LaravelApparatusServiceProvider;
 use October\Rain\Translation\Translator;
 use Golem15\Apparatus\FormWidgets\KnobWidget;
 use Intervention\Image\ImageServiceProvider;
+use Winter\Translate\Classes\ThemeScanner;
+use Winter\Translate\Models\Message;
 
 /**
  * Apparatus Plugin Information File
@@ -153,6 +155,20 @@ class Plugin extends PluginBase
                 return new DependencyInjector($this->app);
             }
         );
+
+        \Event::listen('winter.translate.themeScanner.afterScan', function (ThemeScanner $scanner) {
+            $messages = [];
+            // scan <root>/plugins/*/*/components/*/*.htm for messages for all plugins in system
+            $pluginPath = plugins_path();
+            $componentPath = $pluginPath . '/*/*/components/*/*.htm';
+            $componentFiles = glob($componentPath);
+            foreach ($componentFiles as $file) {
+                $content = file_get_contents($file);
+                $messages = array_merge($messages, $scanner->parseContent($content));
+            }
+
+            Message::importMessages($messages);
+        });
     }
 
     /**
