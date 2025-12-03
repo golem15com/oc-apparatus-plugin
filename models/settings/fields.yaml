@@ -12,11 +12,13 @@ secondaryTabs:
             tab: golem15.apparatus::lang.settings.messaging-tab
             span: left
             type: dropdown
+            default: topRight
         theme:
             label: golem15.apparatus::lang.settings.messaging-theme
             tab: golem15.apparatus::lang.settings.messaging-tab
             type: dropdown
             span: right
+            default: queststream
 
         openAnimation:
             label: golem15.apparatus::lang.settings.messaging-openAnimation
@@ -34,14 +36,17 @@ secondaryTabs:
             label: golem15.apparatus::lang.settings.messaging-dismissQueue
             tab: golem15.apparatus::lang.settings.messaging-tab
             type: switch
+            default: true
         force:
             label: golem15.apparatus::lang.settings.messaging-force
             tab: golem15.apparatus::lang.settings.messaging-tab
             type: switch
+            default: false
         modal:
             label: golem15.apparatus::lang.settings.messaging-modal
             tab: golem15.apparatus::lang.settings.messaging-tab
             type: switch
+            default: false
         timeout:
             label: golem15.apparatus::lang.settings.messaging-timeout
             tab: golem15.apparatus::lang.settings.messaging-tab

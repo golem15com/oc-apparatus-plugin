@@ -85,8 +85,20 @@ class Messaging extends ComponentBase
 
         $settings = Settings::instance()->value;
 
-        if (!\is_array($settings)) {
-            return;
+        // Provide fallback defaults if settings are not configured
+        if (!\is_array($settings) || empty($settings)) {
+            $settings = [
+                'layout' => 'topRight',
+                'theme' => 'tailwind',
+                'openAnimation' => 'animated fadeIn',
+                'closeAnimation' => 'animated fadeOut',
+                'template' => null,
+                'timeout' => 5,
+                'dismissQueue' => true,
+                'force' => false,
+                'modal' => false,
+                'maxVisible' => 5,
+            ];
         }
 
         $this->layout = $settings['layout'];

@@ -13,3 +13,8 @@
 1.1.1:
     - Background Import Job
     - Knob Widget
+1.1.2:
+    - Add default messaging settings
+    - Add QuestStream custom theme CSS
+    - Improve flash message positioning and styling
+    - seed_messaging_defaults.php

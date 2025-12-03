@@ -27,7 +27,7 @@
 
                 this.defaults = {
                     noty: {
-                        layout: 'top',
+                        layout: 'topRight',
                         theme: 'tailwind',
                         type: 'alert',
                         text: '',

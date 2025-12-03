@@ -30,7 +30,6 @@
              * Define which events this plugin listens to
              */
             listens() {
-                console.log('Apparatus ConfirmModal: listens() called');
                 return {
                     ajaxConfirmMessage: 'handleConfirm'
                 };

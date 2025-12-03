@@ -119,6 +119,7 @@ class Settings extends Model
     {
         return [
             'tailwind'     => 'tailwind',
+            'queststream'  => 'queststream',
             'bootstrap-v3' => 'bootstrap-v3',
             'bootstrap-v4' => 'bootstrap-v4',
             'metroui'      => 'metroui',
