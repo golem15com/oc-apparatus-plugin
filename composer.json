@@ -21,6 +21,7 @@
   "minimum-stability": "dev",
   "require": {
     "keios/laravel-apparatus": "dev-develop",
+    "intervention/image": "dev-main",
     "hashids/hashids": "5.0.2"
   }
 }

@@ -20,7 +20,7 @@ use System\Classes\PluginBase;
 use Keios\LaravelApparatus\LaravelApparatusServiceProvider;
 use October\Rain\Translation\Translator;
 use Golem15\Apparatus\FormWidgets\KnobWidget;
-use Intervention\Image\ImageServiceProvider;
+// use Intervention\Image\ImageServiceProvider; // Not needed in Intervention Image v3 (auto-discovered)
 use Winter\Translate\Classes\ThemeScanner;
 use Winter\Translate\Models\Message;
 
@@ -123,7 +123,7 @@ class Plugin extends PluginBase
     public function register(): void
     {
         $this->app->register(LaravelQueueClearServiceProvider::class);
-        $this->app->register(ImageServiceProvider::class);
+        // $this->app->register(ImageServiceProvider::class); // Not needed in Intervention Image v3 (auto-discovered)
         $this->commands(
             [
                 Optimize::class,
