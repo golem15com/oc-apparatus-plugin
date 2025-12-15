@@ -154,6 +154,51 @@ class RequestSender
         ];
     }
 
+    /**
+     * Send PATCH request
+     *
+     * @param array  $data
+     * @param string $url
+     * @param bool   $asJson
+     * @param bool   $returnArray Return array with code/content/error (default: true)
+     * @return array|string
+     */
+    public function sendPatchRequest(array $data, string $url, bool $asJson = true, bool $returnArray = true)
+    {
+        if($asJson){
+            $data = json_encode($data);
+        } else {
+            $data = http_build_query($data);
+        }
+        $error = false;
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PATCH');
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        $content = curl_exec($ch);
+
+        if (curl_errno($ch)) {
+            $error = curl_error($ch);
+        }
+
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($returnArray) {
+            return [
+                'code'    => $httpCode,
+                'content' => $content,
+                'error'   => $error,
+            ];
+        }
+
+        return $content;
+    }
+
     public function addHeader($header)
     {
         $this->headers[] = $header;
