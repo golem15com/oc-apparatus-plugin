@@ -7,6 +7,9 @@ use Event;
 use Flash;
 use Golem15\Apparatus\Console\FakeJob;
 use Golem15\Apparatus\Console\SaneGitModules;
+use Golem15\Apparatus\Console\MailExportCommand;
+use Golem15\Apparatus\Console\MailImportCommand;
+use Golem15\Apparatus\Console\MailResetCommand;
 use Illuminate\Foundation\AliasLoader;
 use Golem15\Apparatus\Classes\BackendInjector;
 use Golem15\Apparatus\Classes\DependencyInjector;
@@ -129,7 +132,10 @@ class Plugin extends PluginBase
                 Optimize::class,
                 QueueClearCommand::class,
                 SaneGitModules::class,
-                FakeJob::class
+                FakeJob::class,
+                MailExportCommand::class,
+                MailImportCommand::class,
+                MailResetCommand::class,
             ]
         );
 
