@@ -56,6 +56,7 @@ class Plugin extends PluginBase
         return [
             Components\Messaging::class => 'apparatusFlashMessages',
             Components\ConfirmModal::class => 'confirmModal',
+            Components\InfiniteScroll::class => 'infiniteScroll',
         ];
     }
 
