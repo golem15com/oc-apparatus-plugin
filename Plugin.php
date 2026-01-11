@@ -287,7 +287,31 @@ class Plugin extends PluginBase
                 );
             }
         );
+
+        // Register blog URL validation middleware
+        $this->registerBlogValidationMiddleware();
     }
+
+    /**
+     * Register blog URL validation middleware
+     */
+    protected function registerBlogValidationMiddleware(): void
+    {
+        // Load blog configuration
+        $this->mergeConfigFrom(
+            __DIR__ . '/config/blog.php',
+            'golem15.apparatus::blog'
+        );
+
+        // Register middleware globally for web routes
+        if (\Config::get('golem15.apparatus::blog.url_validation.enabled', true)) {
+            $this->app['router']->pushMiddlewareToGroup(
+                'web',
+                \Golem15\Apparatus\Middleware\BlogUrlValidationMiddleware::class
+            );
+        }
+    }
+
     public function registerMarkupTags()
     {
         return [
