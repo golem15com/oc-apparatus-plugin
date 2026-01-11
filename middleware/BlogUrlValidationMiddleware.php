@@ -186,7 +186,7 @@ class BlogUrlValidationMiddleware
                 'post_slug' => $postSlug,
             ]);
 
-            return $this->notFoundResponse();
+            $this->notFoundResponse();
         }
 
         // Get post's primary category
@@ -216,8 +216,9 @@ class BlogUrlValidationMiddleware
                 'wrong_category' => $categorySlug,
                 'correct_category' => $primaryCategory->slug,
             ]);
-
-            return $this->redirectResponse($correctUrl);
+            // actually advised to return 404 instead of redirect
+            $this->notFoundResponse();
+            // return $this->redirectResponse($correctUrl);
         }
 
         return $next($request);
