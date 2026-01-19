@@ -21,7 +21,7 @@ class RequestSender
      * @param string      $contentType
      * @param string|null $bearerToken
      */
-    public function __construct($bearerToken = null, $contentType = 'application/json')
+public function __construct($bearerToken = null, $contentType = 'application/json')
     {
         $this->headers[] = 'Content-Type: '.$contentType;
         if ($bearerToken) {
@@ -49,6 +49,40 @@ class RequestSender
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        $result = curl_exec($ch);
+
+        curl_close($ch);
+
+        return $result;
+    }
+
+    public function sendPostRequestWithFile(array $data, string $url, string $filePath, bool $asJson = false)
+    {
+        if (!file_exists($filePath)) {
+            throw new \RuntimeException("File not found: {$filePath}");
+        }
+        if($asJson){
+            $data = json_encode($data);
+        } else {
+            $data = http_build_query($data);
+        }
+        // Prepare multipart form data
+        $postFields = $data;
+        $postFields['file'] = new \CURLFile($filePath);
+
+        $ch = curl_init();
+        curl_setopt_array($ch, [
+            CURLOPT_URL => $url,
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => $postFields,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTPHEADER => array_merge($this->headers, [
+                // Let curl generate multipart boundary automatically
+                'Content-Type: multipart/form-data'
+            ]),
+        ]);
+
         $result = curl_exec($ch);
 
         curl_close($ch);
