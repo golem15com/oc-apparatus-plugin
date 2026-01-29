@@ -104,7 +104,6 @@ class BrowserGeneration implements ApparatusQueueJob
         } finally {
             $this->cleanupDir($tmpProfile);
         }
-        $jobManager->completeJob($this->jobId);
     }
 
     private function preflightChecks(JobManager $jobManager, mixed $chromePath): bool
