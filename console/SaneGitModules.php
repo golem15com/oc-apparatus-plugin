@@ -3,7 +3,6 @@
 namespace Golem15\Apparatus\Console;
 
 use Illuminate\Console\Command;
-use Illuminate\Database\Schema\Blueprint;
 
 /**
  * Class SaneModules
@@ -46,6 +45,28 @@ class SaneGitModules extends Command
         $this->info('Finished');
     }
 
+    /**
+     * Resolve the actual .git directory path.
+     * Handles both standalone repos (.git is a directory) and submodules (.git is a file with gitdir pointer).
+     */
+    private function resolveGitDir(): string
+    {
+        $output = [];
+        exec('git rev-parse --git-dir 2>/dev/null', $output, $exitCode);
+
+        if ($exitCode === 0 && !empty($output[0])) {
+            $gitDir = $output[0];
+            // Make absolute if relative
+            if (!str_starts_with($gitDir, '/')) {
+                $gitDir = base_path($gitDir);
+            }
+            return rtrim($gitDir, '/');
+        }
+
+        // Fallback to default
+        return base_path('.git');
+    }
+
     private function addExcludes(): void
     {
         exec('git ls-files --others --exclude-standard -- modules/', $untracked);
@@ -54,7 +75,15 @@ class SaneGitModules extends Command
             return;
         }
 
-        $excludePath = base_path('.git/info/exclude');
+        $gitDir = $this->resolveGitDir();
+        $excludePath = $gitDir . '/info/exclude';
+
+        // Ensure the info/ directory exists
+        $infoDir = dirname($excludePath);
+        if (!is_dir($infoDir)) {
+            mkdir($infoDir, 0755, true);
+        }
+
         $existing = file_exists($excludePath) ? file_get_contents($excludePath) : '';
 
         // Remove old managed section if present (idempotent re-run)
@@ -64,19 +93,21 @@ class SaneGitModules extends Command
         $section = "\n# BEGIN g15:sane-git\n" . implode("\n", $paths) . "\n# END g15:sane-git\n";
 
         file_put_contents($excludePath, rtrim($existing) . $section);
-        $this->info('Added ' . count($paths) . ' untracked module paths to .git/info/exclude');
+        $this->info('Added ' . count($paths) . ' untracked module paths to ' . $excludePath);
     }
 
     private function removeExcludes(): void
     {
-        $excludePath = base_path('.git/info/exclude');
+        $gitDir = $this->resolveGitDir();
+        $excludePath = $gitDir . '/info/exclude';
+
         if (!file_exists($excludePath)) {
             return;
         }
         $content = file_get_contents($excludePath);
         $cleaned = preg_replace('/\n?# BEGIN g15:sane-git\n.*?# END g15:sane-git\n?/s', '', $content);
         file_put_contents($excludePath, $cleaned);
-        $this->info('Removed g15:sane-git managed excludes from .git/info/exclude');
+        $this->info('Removed g15:sane-git managed excludes from ' . $excludePath);
     }
 
     /**
