@@ -6,6 +6,7 @@ use Log;
 use Golem15\Apparatus\Classes\JobManager;
 use Golem15\Apparatus\Contracts\ApparatusQueueJob;
 use Golem15\Apparatus\ValueObjects\GenerationOptions;
+use System\Models\File;
 use Symfony\Component\Process\Exception\ProcessTimedOutException;
 use Symfony\Component\Process\Process;
 
