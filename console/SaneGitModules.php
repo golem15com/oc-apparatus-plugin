@@ -6,7 +6,7 @@ use Illuminate\Console\Command;
 
 /**
  * Class SaneModules
- * @package PixelPixel\Mplibrary\Console
+ * @package Golem15\Apparatus\Console
  */
 class SaneGitModules extends Command
 {
