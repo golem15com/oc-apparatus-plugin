@@ -69,12 +69,6 @@ class SaneGitModules extends Command
 
     private function addExcludes(): void
     {
-        exec('git ls-files --others --exclude-standard -- modules/', $untracked);
-        if (empty($untracked)) {
-            $this->info('No untracked files in modules/ to exclude.');
-            return;
-        }
-
         $gitDir = $this->resolveGitDir();
         $excludePath = $gitDir . '/info/exclude';
 
@@ -86,13 +80,21 @@ class SaneGitModules extends Command
 
         $existing = file_exists($excludePath) ? file_get_contents($excludePath) : '';
 
-        // Remove old managed section if present (idempotent re-run)
-        $existing = preg_replace('/\n?# BEGIN g15:sane-git\n.*?# END g15:sane-git\n?/s', '', $existing);
+        // Remove old managed section BEFORE querying, so --exclude-standard
+        // doesn't hide previously excluded files from the listing
+        $cleaned = preg_replace('/\n?# BEGIN g15:sane-git\n.*?# END g15:sane-git\n?/s', '', $existing);
+        file_put_contents($excludePath, $cleaned);
+
+        exec('git ls-files --others --exclude-standard -- modules/', $untracked);
+        if (empty($untracked)) {
+            $this->info('No untracked files in modules/ to exclude.');
+            return;
+        }
 
         $paths = array_unique($untracked);
         $section = "\n# BEGIN g15:sane-git\n" . implode("\n", $paths) . "\n# END g15:sane-git\n";
 
-        file_put_contents($excludePath, rtrim($existing) . $section);
+        file_put_contents($excludePath, rtrim($cleaned) . $section);
         $this->info('Added ' . count($paths) . ' untracked module paths to ' . $excludePath);
     }
 
