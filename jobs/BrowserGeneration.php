@@ -8,6 +8,7 @@ use Golem15\Apparatus\Contracts\ApparatusQueueJob;
 use Golem15\Apparatus\ValueObjects\GenerationOptions;
 use Symfony\Component\Process\Exception\ProcessTimedOutException;
 use Symfony\Component\Process\Process;
+use System\Models\File;
 
 class BrowserGeneration implements ApparatusQueueJob
 {
@@ -88,10 +89,18 @@ class BrowserGeneration implements ApparatusQueueJob
 
             Log::info("PDF written OK (" . filesize($this->options->path) . " bytes)");
             $file = new File();
-            $file->is_public = false;
+            $file->is_public = true;
             $file->fromFile($this->options->path);
             $file->save();
-            $jobManager->completeJob($this->jobId, ['file' => $file->toArray()]);
+            // Merge file data with existing job metadata (preserves book_order_id etc.)
+            $existing = \Illuminate\Support\Facades\DB::table('golem15_apparatus_jobs')
+                ->where('id', $this->jobId)
+                ->value('metadata');
+            $merged = array_merge(
+                $existing ? (json_decode($existing, true) ?: []) : [],
+                ['file' => $file->toArray()]
+            );
+            $jobManager->completeJob($this->jobId, $merged);
             event('apparatus.media.generated', [$file, $this->jobId]);
         } catch (ProcessTimedOutException $e) {
             $error = "Chromium timed out after {$timeoutSeconds}s: " . $e->getMessage();
