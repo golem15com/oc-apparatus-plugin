@@ -56,19 +56,24 @@ public function __construct($bearerToken = null, $contentType = 'application/jso
         return $result;
     }
 
-    public function sendPostRequestWithFile(array $data, string $url, string $filePath, bool $asJson = false)
+    public function sendPostRequestWithFile(array $data, string $url, string $filePath, bool $asJson = false, ?string $mimeType = null, ?string $fileName = null)
     {
         if (!file_exists($filePath)) {
             throw new \RuntimeException("File not found: {$filePath}");
         }
-        if($asJson){
-            $data = json_encode($data);
-        } else {
-            $data = http_build_query($data);
-        }
-        // Prepare multipart form data
+
+        // Multipart uploads require array data — ignore $asJson to avoid breaking cURL
         $postFields = $data;
-        $postFields['file'] = new \CURLFile($filePath);
+        $postFields['file'] = new \CURLFile(
+            $filePath,
+            $mimeType ?? mime_content_type($filePath) ?: 'application/octet-stream',
+            $fileName ?? basename($filePath)
+        );
+
+        // Filter out Content-Type header so cURL auto-generates multipart boundary
+        $headers = array_filter($this->headers, function ($header) {
+            return stripos($header, 'Content-Type:') !== 0;
+        });
 
         $ch = curl_init();
         curl_setopt_array($ch, [
@@ -77,10 +82,7 @@ public function __construct($bearerToken = null, $contentType = 'application/jso
             CURLOPT_POSTFIELDS => $postFields,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTPHEADER => array_merge($this->headers, [
-                // Let curl generate multipart boundary automatically
-                'Content-Type: multipart/form-data'
-            ]),
+            CURLOPT_HTTPHEADER => $headers,
         ]);
 
         $result = curl_exec($ch);
