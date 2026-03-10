@@ -1,199 +1,427 @@
-# Apparatus Plugin #
+![Apparatus](assets/img/hero.png)
 
-Apparatus is a set of tools for OctoberCMS. Requires PHP8.3
+# Apparatus Plugin
 
-### Functionalities ###
+Apparatus is the core framework plugin for the Golem15 WinterCMS stack. It provides dependency injection, background job management, route resolution, flash notifications, form widgets, backend asset injection, and a suite of developer utilities. Requires PHP 8.4+.
 
-* Dependency injector
-* Flash notifications
-* List switch replacement
-* Background Job Manager
-* Simple request sender
-* Backend assets and ajax injector
-* Event-based business logic scenario processor for painless application behavior management & modification.
+## Features
 
-### Notifications ###
+- **Dependency Injector** - Automatic dependency injection for CMS components
+- **Route Resolver** - Programmatic CMS page/component URL resolution
+- **Background Job Manager** - Queue jobs with progress tracking in the backend
+- **Background Import Manager** - Large CSV imports via queue workers
+- **Flash Notifications** - Configurable notification system with multiple themes (Noty.js)
+- **Confirm Modal** - Custom styled AJAX confirmation dialogs
+- **Infinite Scroll** - Automatic pagination with deduplication
+- **Backend Injector** - Dynamic CSS/JS/AJAX handler injection into backend controllers
+- **ListToggle** - Clickable boolean toggle column for backend lists
+- **KnobWidget** - Dial/knob form widget for number selection
+- **Request Sender** - cURL-based HTTP client with auth support
+- **Blog URL Validation Middleware** - SEO-compliant blog URL enforcement
+- **Protected File Downloads** - Backend-authenticated file access
+- **Translation API** - Dynamic translation key retrieval endpoint
+- **Translation Scanner** - Auto-scans component templates for translatable strings
+- **Twig Filters** - `ucfirst` and `human_date`
+- **Mail Template Management** - Export, import, and reset mail templates via CLI
+- **Pipeline** - Middleware-style operation chaining utility
+- **Resolver Facade** - Quick access to route resolution from anywhere
 
-- Put `[apparatusFlashMessages]` component into your layout and call it with `{% component "apparatusFlashMessages" %}` after jquery.
+## Installation
 
-- All exceptions and Flash messages will be now covered by Apparatus. You can configure notification design in Settings and in your CSS files.
+Apparatus is included as a git submodule in the Golem15 starter stack. It is a dependency of most other Golem15 plugins.
 
-### Dependency Injector ###
+```bash
+composer require golem15/apparatus-framework
+```
 
-Here is an example of using with a OctoberCMS component:
+### Dependencies
+
+- `keios/laravel-apparatus` - Scenario-based workflow engine
+- `intervention/image` - Image manipulation (v3, auto-discovered)
+- `hashids/hashids` - Short unique ID generation
+
+---
+
+## Components
+
+### Flash Messages
+
+Provides automatic handling of all exceptions and flash messages with configurable notification themes.
+
+Add the component to your layout:
+
+```twig
+[apparatusFlashMessages]
+==
+{% component "apparatusFlashMessages" %}
+```
+
+Configure the notification engine in **Settings > Apparatus > Notifications**:
+- Layout/position
+- Animation style (powered by Animate.css)
+- Theme: tailwind, bootstrap-v3, bootstrap-v4, metroui, mint, nest, relax, semanticui, sunset, queststream
+- Timeout, max visible count, modal behavior
+
+### Confirm Modal
+
+Drop-in replacement for the default browser confirm dialog on AJAX requests:
+
+```twig
+[confirmModal]
+==
+{% component "confirmModal" %}
+```
+
+### Infinite Scroll
+
+Automatic infinite scroll for paginated lists with built-in deduplication:
+
+```twig
+[infiniteScroll]
+==
+{% component "infiniteScroll" %}
+```
+
+---
+
+## Dependency Injector
+
+Automatically injects dependencies into CMS components that implement `NeedsDependencies`. Any method prefixed with `inject` will be resolved from the service container.
 
 ```php
 <?php namespace Acme\Plugin\Components;
 
 use Cms\Classes\ComponentBase;
 use Golem15\Apparatus\Contracts\NeedsDependencies;
-use Acme\Plugin\Classes\WebsiteRepository;
+use Acme\Plugin\Repositories\ProductRepository;
 
-class AcmeComponent extends ComponentBase implements NeedsDependencies
+class ProductList extends ComponentBase implements NeedsDependencies
 {
+    protected ProductRepository $products;
 
-    public function componentDetails()
+    public function injectProductRepository(ProductRepository $products): void
     {
-        return [
-            'name'        => 'Acme Component',
-            'description' => 'No description...',
-        ];
+        $this->products = $products;
     }
 
-    public function defineProperties()
+    public function onRun(): void
     {
-        return [];
-    }
-
-    protected $recordRepository;
-
-    public function injectWebsiteRepository(WebsiteRepository $websiteRepository)
-    {
-        $this->recordRepository = $websiteRepository;
-    }
-
-    public function onRun()
-    {
-        $this->page['records'] = $this->recordRepository->getAll();
+        $this->page['products'] = $this->products->getAll();
     }
 }
 ```
 
-### Background Job Manager
+---
 
-With Apparatus JobManager you can easily push jobs to queue and see their progress in backend.
+## Route Resolver
 
-Check jobs\SendRequestJob.php for exemplary job structure.
-
-When you have your file, you can deploy it from within controller like:
+Programmatically resolve CMS page URLs by their component names. Useful for generating links without hardcoding URLs.
 
 ```php
-<?php
+use Golem15\Apparatus\Facades\Resolver;
 
-class SomeComponent {
-    public function onDeployJob(){
+// Get the URL of a page containing a specific component
+$url = Resolver::resolveRouteTo('blogPost');
+// e.g. "/blog/:category/:post"
 
-        $job = new MyJobClass();
-        $jobManager = \App::make('Golem15\Apparatus\Classes\JobManager');
-        $jobManager->dispatch($job, 'Requests sending');
+// Get URL without dynamic parameters
+$url = Resolver::resolveRouteWithoutParamsTo('blogPost');
+// e.g. "/blog"
 
+// Get URL with a specific parameter value filled in
+$url = Resolver::resolveParameterizedRouteTo('blogPost', 'slug', 'my-article');
+// e.g. "/blog/tech/my-article"
+
+// Resolve a Page object from a URL
+$page = Resolver::resolvePageForUrl('/blog/tech/my-article');
+```
+
+Also available via the service container:
+
+```php
+$resolver = app('apparatus.route.resolver');
+```
+
+---
+
+## Background Job Manager
+
+Push jobs to the queue and monitor their progress in the backend under **Apparatus > Jobs**.
+
+### Creating a Job
+
+Your job class must implement `ApparatusQueueJob`:
+
+```php
+use Golem15\Apparatus\Contracts\ApparatusQueueJob;
+use Golem15\Apparatus\Classes\JobManager;
+
+class MyDataImportJob implements ApparatusQueueJob, \Illuminate\Contracts\Queue\ShouldQueue
+{
+    use \Illuminate\Bus\Queueable, \Illuminate\Queue\InteractsWithQueue;
+
+    protected int $jobId;
+
+    public function assignJobId(int $jobId): void
+    {
+        $this->jobId = $jobId;
+    }
+
+    public function handle(): void
+    {
+        $jobManager = app(JobManager::class);
+        $jobManager->startJob($this->jobId);
+
+        // Do work, update progress...
+        $jobManager->updateJobState($this->jobId, $current, $total);
+
+        $jobManager->completeJob($this->jobId);
     }
 }
 ```
 
-If you do not want to clutter your controller (eg if you have job that is run every few minutes), you can use
+### Dispatching a Job
 
+```php
+$job = new MyDataImportJob();
+$jobManager = app(\Golem15\Apparatus\Classes\JobManager::class);
+$jobManager->dispatch($job, 'Data import');
 ```
-$jobManager->isSimpleJob(true);
+
+For jobs that run frequently and don't need to be tracked in the UI:
+
+```php
+$jobManager->isSimpleJob(true); // removes successful job records from DB
+$jobManager->dispatch($job, 'Periodic sync');
 ```
 
-before dispatching - this will remove **successful** job from DB at the end.
+---
 
-### Background Import Manager
+## Background Import Manager
 
-**Under development!**
+Drop-in replacement for WinterCMS's ImportExportController that processes large CSV files via queue workers instead of blocking the HTTP request.
 
-Sometimes you need to import large amount of data, like thousands of rows. While [October ImportExport](https://octobercms.com/docs/backend/import-export) behavior works quite splendid, when working with large CSV you need to increase your php.ini and webserver timeouts.
+Replace the behavior in your controller:
 
-Apparatus provides solution for that. Replace:
-
-```
+```php
+// Instead of:
 'Backend.Behaviors.ImportExportController'
-```
 
-with
-
-```
+// Use:
 'Golem15.Apparatus.Behaviors.BackgroundImportExportController'
 ```
 
-and in your Import model use:
-
-```
-public function importData($results, $sessionKey = null)
-{
-    $job = new CsvImportJob($result, 'Acme\Plugin\Models\YourModel', true, 20);
-    $jobManager = \App::make(JobManager::class);
-    $jobId = $jobManager->dispatch($job, 'Rates import');
-
-    return $jobId;
-}
-```
-
-CsvImport job takes following arguments:
-
-- results array
-- your main model name
-- updateExisting boolean flag (under development)
-- chunk size (we insert data in chunks during import to make it faster)
-
-You can also replace default CsvImportJob with your own job class.
-
-Now instead of normal Import behavior popups, you will be redirected to Apparatus Job screen:
-
-![import](https://i.viamage.com/jz/screen-2018-04-28-15-29-06.png)
-
-![job](https://i.viamage.com/jz/screen-2018-04-28-15-15-26.png)
-
-![job_complete](https://i.viamage.com/jz/screen-2018-04-28-15-29-55.png)
-
-**Remember to replace Sync driver for your queue with something else and start queue worker. We recommend Redis.**
-
-Find more about queue configuration [here](https://octobercms.com/docs/services/queues#running-the-queue-listener).
-
-[Movie with example](http://uploads.golem15.eu/video/import-2018-04-29_11.08.25.mp4)
-
-### ListToggle
-
-Column widget based on Inetis ListSwitch MIT OctoberCMS Plugin. Rewritten to by typesafe and faster.
-
-Use "listtoggle" instead of "switch" and you will get clickable column field that will allow you to switch between true and false for boolean fields.
-
-
-### KnobWidget
-
-Nice widget for selecting number with knob.
-
-![knob](https://i.viamage.com/jz/screen-2018-05-17-11-27-27.png)
-
-Example yaml:
-
-```
-    my_number:
-      knobLabel: Label that will appear to the right (not above)
-      knobComment: Comment that will appear to the right (not below)
-      type: knob
-      min: 1 # minimum value
-      default: 2 # default value
-      max: 30 # max value
-      angleOffset: -125 # starting point angle
-      angleArc: 250  # whole knob angle
-
-```
-
-### Request Sender
-
-Simple curl request sender. DELETE / PUT / GET will be added soon.
+In your Import model:
 
 ```php
-<?php
-class SomeClass {
-  public function addBook(){
-    $data = [
-     'name' => 'My book',
-     'author' => 'Me',
-     'bought_at' => '2018-05-05 12:30'
-    ];
+use Golem15\Apparatus\Classes\JobManager;
+use Golem15\Apparatus\Jobs\CsvImportJob;
 
-    $requestSender = new \Golem15\Apparatus\Classes\RequestSender();
+public function importData($results, $sessionKey = null)
+{
+    $job = new CsvImportJob($results, 'Acme\Plugin\Models\Product', true, 20);
+    $jobManager = app(JobManager::class);
 
-    $curlResponse = $requestSender->sendPostRequest($data, 'http://example.com/api/_mybooks/add');
-
-    }
+    return $jobManager->dispatch($job, 'Product import');
 }
 ```
 
+`CsvImportJob` parameters:
+- `$results` - Array of data rows
+- `$modelClass` - Target model class name
+- `$updateExisting` - Whether to update existing records
+- `$chunkSize` - Number of rows per insert batch
 
-### Scenario Processor ###
+After dispatching, users are redirected to the Apparatus Jobs screen to monitor progress.
 
--- early alpha --
+**Important:** You must configure a real queue driver (e.g., Redis, database) instead of `sync` and run a queue worker.
+
+---
+
+## ListToggle
+
+Clickable boolean toggle column for backend lists. Based on Inetis ListSwitch, rewritten for type safety and performance.
+
+Use `listtoggle` as the column type in your `columns.yaml`:
+
+```yaml
+is_active:
+    label: Active
+    type: listtoggle
+```
+
+Options:
+- Custom icon and text labels for on/off states
+- Read-only mode
+- Custom title text
+
+---
+
+## KnobWidget
+
+A dial/knob form widget for selecting numeric values. Uses the jQuery Knob library.
+
+```yaml
+my_number:
+    type: knob
+    knobLabel: Priority Level
+    knobComment: Set the priority for this item
+    min: 1
+    max: 30
+    default: 5
+    angleOffset: -125
+    angleArc: 250
+```
+
+Configurable properties: `min`, `max`, `default`, `step`, `width`, `height`, `angleOffset`, `angleArc`, `thickness`, `lineCap`, `fgColor`, `bgColor`, `inputColor`, `displayInput`, `readOnly`.
+
+---
+
+## Backend Injector
+
+Inject CSS, JS, and AJAX handlers into any backend controller from your plugin's boot method:
+
+```php
+$injector = app('apparatus.backend.injector');
+
+$injector->addCss('/plugins/acme/plugin/assets/css/custom.css');
+$injector->addJs('/plugins/acme/plugin/assets/js/custom.js');
+$injector->addAjaxHandler('onCustomAction', function() {
+    // handler logic
+});
+```
+
+---
+
+## Request Sender
+
+cURL-based HTTP client supporting multiple methods and authentication:
+
+```php
+use Golem15\Apparatus\Classes\RequestSender;
+
+// Basic usage
+$sender = new RequestSender();
+$response = $sender->sendPostRequest(['key' => 'value'], 'https://api.example.com/endpoint');
+
+// With Bearer token authentication
+$sender = new RequestSender('your-api-token');
+$response = $sender->sendGetRequest('https://api.example.com/data');
+
+// All available methods
+$sender->sendPostRequest($data, $url, $asJson = false);
+$sender->sendPutRequest($data, $url);
+$sender->sendPatchRequest($data, $url);
+$sender->sendGetRequest($url);
+$sender->sendPostRequestWithFile($data, $url, $filePath);
+$sender->downloadFile($url, $destinationPath);
+```
+
+---
+
+## Blog URL Validation Middleware
+
+SEO middleware that validates blog URLs against the Winter.Blog category/post structure:
+
+- Returns **404** for non-existing categories
+- **301 redirects** posts accessed under an incorrect category to the correct URL
+
+Configure in `config/blog.php` or via environment variables:
+
+```env
+BLOG_URL_VALIDATION_ENABLED=true
+BLOG_URL_VALIDATION_ROUTES=blog
+```
+
+---
+
+## Twig Filters
+
+### `ucfirst`
+
+Capitalizes the first letter of a string:
+
+```twig
+{{ variable|ucfirst }}
+```
+
+### `human_date`
+
+Formats dates into human-readable strings:
+
+```twig
+{{ post.created_at|human_date }}
+```
+
+Output examples: "Today at 14:30", "Tomorrow at 09:00", "Monday at 11:15", "In 2 weeks", "In 3 months".
+
+---
+
+## Console Commands
+
+| Command | Description |
+|---------|-------------|
+| `apparatus:optimize` | Optimizes the `deferred_bindings` table (varchar to integer conversion) |
+| `apparatus:mail-export` | Export mail templates, layouts, and partials to filesystem (`--force` to overwrite) |
+| `apparatus:mail-import` | Import mail templates from filesystem back to database |
+| `apparatus:mail-reset` | Reset all mail templates to their defaults |
+| `apparatus:fakejob` | Dispatch a test job (sleeps for N seconds) for queue testing |
+| `g15:sane-git` | Set skip-worktree on git submodules (`--insane` to revert) |
+| `queue:clear` | Clear all queued jobs by connection/queue name |
+
+---
+
+## Routes
+
+| Method | URL | Description |
+|--------|-----|-------------|
+| `GET` | `/storage/app/uploads/protected/{slug}` | Protected file download (requires backend authentication) |
+| `POST` | `/_translapi` | Dynamic translation key retrieval API |
+
+---
+
+## Permissions
+
+| Permission | Description |
+|------------|-------------|
+| `golem15.apparatus.access_settings` | Access Apparatus notification settings |
+| `golem15.apparatus.access_jobs` | Access the Jobs backend interface |
+
+---
+
+## Localization
+
+Apparatus ships with translations for:
+- English (en)
+- French (fr)
+- Polish (pl)
+
+### Translation Scanner
+
+Apparatus extends the Winter.Translate theme scanner to automatically discover translatable strings in component partial templates (`plugins/*/*/components/*/*.htm`), ensuring they appear in the translation interface without manual registration.
+
+---
+
+## Pipeline Utility
+
+A middleware-style pipeline for chaining operations:
+
+```php
+use Golem15\Apparatus\Classes\Pipeline;
+
+$result = (new Pipeline(app()))
+    ->send($data)
+    ->through([
+        FirstProcessor::class,
+        SecondProcessor::class,
+    ])
+    ->thenReturn();
+```
+
+Each processor implements the `Pipe` contract with a `handle($payload, Closure $next)` method.
+
+---
+
+## License
+
+MIT
