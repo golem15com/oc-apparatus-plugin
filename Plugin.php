@@ -5,6 +5,7 @@ use Backend\Classes\Controller;
 use Cms\Classes\ComponentBase;
 use Event;
 use Flash;
+use System\Controllers\Updates as UpdatesController;
 use Golem15\Apparatus\Console\FakeJob;
 use Golem15\Apparatus\Console\SaneGitModules;
 use Golem15\Apparatus\Console\MailExportCommand;
@@ -287,6 +288,49 @@ class Plugin extends PluginBase
                 );
             }
         );
+
+        // Fix relative image paths in plugin README/UPGRADE on backend plugin details page.
+        // Uses Winter's backend controller middleware system — BackendController calls these
+        // closures with ($request, $response) AFTER the action has rendered.
+        UpdatesController::extend(function ($controller) {
+            $controller->middleware(function ($request, $response) {
+                error_log('README_MW_CALLED: ' . $request->getRequestUri() . ' resp_type: ' . get_class($response));
+                $uri = $request->getRequestUri();
+                if (!preg_match('@/system/updates/details/([^/?]+)@', $uri, $match)) {
+                    return;
+                }
+
+                if (!method_exists($response, 'getContent')) {
+                    return;
+                }
+
+                $code = str_replace('-', '.', $match[1]);
+                $pluginManager = \System\Classes\PluginManager::instance();
+                $plugin = $pluginManager->findByIdentifier($code);
+                if (!$plugin) {
+                    return;
+                }
+
+                $pluginPath = $pluginManager->getPluginPath($plugin);
+                $basePath = plugins_path();
+                if (strpos($pluginPath, $basePath) !== 0) {
+                    return;
+                }
+
+                $relativePath = ltrim(str_replace($basePath, '', $pluginPath), '/');
+                $publicBase = url('/plugins/' . $relativePath);
+
+                $content = $response->getContent();
+                $content = preg_replace_callback(
+                    '@(<img[^>]*?\bsrc=["\'])(?!https?://|//|/)([^"\']+)(["\'])@i',
+                    function ($m) use ($publicBase) {
+                        return $m[1] . $publicBase . '/' . $m[2] . $m[3];
+                    },
+                    $content
+                );
+                $response->setContent($content);
+            });
+        });
 
         // Register blog URL validation middleware
         $this->registerBlogValidationMiddleware();
