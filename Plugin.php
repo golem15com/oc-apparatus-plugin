@@ -19,6 +19,7 @@ use Golem15\Apparatus\Console\Optimize;
 use Golem15\Apparatus\FormWidgets\ListToggle;
 use Golem15\Apparatus\Console\QueueClearCommand;
 use Golem15\Apparatus\Classes\LaravelQueueClearServiceProvider;
+use Golem15\Apparatus\Models\PersonalApiToken;
 use System\Classes\PluginBase;
 use Keios\LaravelApparatus\LaravelApparatusServiceProvider;
 use October\Rain\Translation\Translator;
@@ -290,6 +291,91 @@ class Plugin extends PluginBase
 
         // Register blog URL validation middleware
         $this->registerBlogValidationMiddleware();
+
+        // Register API token middleware alias
+        $this->app['router']->aliasMiddleware(
+            'token.auth',
+            \Golem15\Apparatus\Middleware\TokenAuthenticate::class
+        );
+
+        // Extend Backend User model with API tokens relation
+        \Backend\Models\User::extend(function ($model) {
+            $model->hasMany['api_tokens'] = [
+                PersonalApiToken::class,
+                'key' => 'backend_user_id',
+            ];
+        });
+
+        // Extend My Account page with API Tokens tab
+        Event::listen('backend.form.extendFields', function ($widget) {
+            if (!$widget->getController() instanceof \Backend\Controllers\Users) {
+                return;
+            }
+            if ($widget->getContext() !== 'myaccount') {
+                return;
+            }
+            if (!$widget->model instanceof \Backend\Models\User) {
+                return;
+            }
+
+            $widget->addTabFields([
+                'api_tokens' => [
+                    'tab'  => 'API Tokens',
+                    'type' => 'partial',
+                    'path' => '~/plugins/golem15/apparatus/partials/_api_tokens.php',
+                ],
+            ]);
+        });
+
+        // Add AJAX handlers for API token management on My Account page
+        \Backend\Controllers\Users::extend(function ($controller) {
+            $controller->addDynamicMethod('onCreateApiToken', function () use ($controller) {
+                $user = \Backend\Facades\BackendAuth::getUser();
+                $name = trim(post('token_name', ''));
+
+                if (empty($name)) {
+                    throw new \ValidationException(['token_name' => ['Token name is required.']]);
+                }
+
+                $plainToken = PersonalApiToken::generateToken();
+
+                $token = new PersonalApiToken();
+                $token->backend_user_id = $user->id;
+                $token->name = $name;
+                $token->token = PersonalApiToken::hashToken($plainToken);
+
+                $expiresAt = post('token_expires_at');
+                if (!empty($expiresAt)) {
+                    $token->expires_at = $expiresAt;
+                }
+
+                $token->save();
+
+                Flash::success('API token created successfully.');
+
+                return ['#apiTokensContainer' => $controller->makePartial(
+                    plugins_path('golem15/apparatus/partials/api_tokens'),
+                    ['newToken' => $plainToken]
+                )];
+            });
+
+            $controller->addDynamicMethod('onRevokeApiToken', function () use ($controller) {
+                $user = \Backend\Facades\BackendAuth::getUser();
+                $tokenId = post('token_id');
+
+                $token = PersonalApiToken::where('id', $tokenId)
+                    ->where('backend_user_id', $user->id)
+                    ->firstOrFail();
+
+                $token->delete();
+
+                Flash::success('API token revoked.');
+
+                return ['#apiTokensContainer' => $controller->makePartial(
+                    plugins_path('golem15/apparatus/partials/api_tokens')
+                )];
+            });
+        });
     }
 
     /**

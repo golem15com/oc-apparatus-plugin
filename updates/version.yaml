@@ -18,3 +18,8 @@
     - Add QuestStream custom theme CSS
     - Improve flash message positioning and styling
     - seed_messaging_defaults.php
+1.2.0:
+    - Personal API Tokens for backend users
+    - Token authentication middleware (token.auth)
+    - API Tokens management tab on My Account page
+    - create_personal_api_tokens_table.php
