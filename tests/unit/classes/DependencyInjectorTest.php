@@ -2,7 +2,7 @@
 
 use Golem15\Apparatus\Classes\DependencyInjector;
 use Golem15\Apparatus\Contracts\NeedsDependencies;
-use Golem15\Apparatus\Tests\PluginTestCase;
+use PHPUnit\Framework\TestCase;
 use Illuminate\Contracts\Container\Container;
 use Mockery;
 use October\Rain\Exception\ApplicationException;
@@ -10,7 +10,7 @@ use October\Rain\Exception\ApplicationException;
 /**
  * Tests for the DependencyInjector class.
  */
-class DependencyInjectorTest extends PluginTestCase
+class DependencyInjectorTest extends TestCase
 {
     private Container $container;
     private DependencyInjector $injector;

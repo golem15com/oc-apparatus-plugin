@@ -1,7 +1,7 @@
 <?php namespace Golem15\Apparatus\Tests\Unit\Classes;
 
 use Golem15\Apparatus\Classes\RouteResolver;
-use Golem15\Apparatus\Tests\PluginTestCase;
+use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
 
 /**
@@ -12,7 +12,7 @@ use ReflectionMethod;
  * (urlMatchesPattern and stripUrlParameters) via reflection, bypassing the
  * constructor entirely.
  */
-class RouteResolverTest extends PluginTestCase
+class RouteResolverTest extends TestCase
 {
     private RouteResolver $resolver;
 

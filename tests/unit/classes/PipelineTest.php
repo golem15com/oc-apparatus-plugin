@@ -3,12 +3,12 @@
 use Closure;
 use Golem15\Apparatus\Classes\Pipeline;
 use Golem15\Apparatus\Contracts\Pipe;
-use Golem15\Apparatus\Tests\PluginTestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests for the Pipeline class.
  */
-class PipelineTest extends PluginTestCase
+class PipelineTest extends TestCase
 {
     // -------------------------------------------------------------------------
     // thenReturn — no pipes

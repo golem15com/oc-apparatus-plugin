@@ -1,12 +1,12 @@
 <?php namespace Golem15\Apparatus\Tests\Unit\Classes;
 
 use Golem15\Apparatus\Classes\RandomAnimalGenerator;
-use Golem15\Apparatus\Tests\PluginTestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests for the RandomAnimalGenerator class.
  */
-class RandomAnimalGeneratorTest extends PluginTestCase
+class RandomAnimalGeneratorTest extends TestCase
 {
     // -------------------------------------------------------------------------
     // generate() — singular

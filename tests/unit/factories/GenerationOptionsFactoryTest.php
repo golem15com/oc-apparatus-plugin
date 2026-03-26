@@ -2,12 +2,12 @@
 
 use Golem15\Apparatus\Factories\GenerationOptionsFactory;
 use Golem15\Apparatus\ValueObjects\GenerationOptions;
-use Golem15\Apparatus\Tests\PluginTestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests for the GenerationOptionsFactory class.
  */
-class GenerationOptionsFactoryTest extends PluginTestCase
+class GenerationOptionsFactoryTest extends TestCase
 {
     // -------------------------------------------------------------------------
     // createForPDF

@@ -1,12 +1,12 @@
 <?php namespace Golem15\Apparatus\Tests\Unit\ValueObjects;
 
 use Golem15\Apparatus\ValueObjects\GenerationOptions;
-use Golem15\Apparatus\Tests\PluginTestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests for the GenerationOptions value object.
  */
-class GenerationOptionsTest extends PluginTestCase
+class GenerationOptionsTest extends TestCase
 {
     // -------------------------------------------------------------------------
     // default values

@@ -1,7 +1,7 @@
 <?php namespace Golem15\Apparatus\Tests\Unit\Classes;
 
 use Golem15\Apparatus\Classes\Clearer;
-use Golem15\Apparatus\Tests\PluginTestCase;
+use PHPUnit\Framework\TestCase;
 use Illuminate\Contracts\Queue\Factory as FactoryContract;
 use Illuminate\Contracts\Queue\Queue;
 use Mockery;
@@ -9,7 +9,7 @@ use Mockery;
 /**
  * Tests for the Clearer class.
  */
-class ClearerTest extends PluginTestCase
+class ClearerTest extends TestCase
 {
     public function tearDown(): void
     {

@@ -1,13 +1,13 @@
 <?php namespace Golem15\Apparatus\Tests\Unit\Classes;
 
 use Golem15\Apparatus\Classes\RequestSender;
-use Golem15\Apparatus\Tests\PluginTestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests for the RequestSender class (header construction only — curl methods
  * make real HTTP calls and are not unit-tested here).
  */
-class RequestSenderTest extends PluginTestCase
+class RequestSenderTest extends TestCase
 {
     // -------------------------------------------------------------------------
     // constructor — Content-Type header

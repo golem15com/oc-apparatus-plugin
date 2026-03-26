@@ -1,7 +1,7 @@
 <?php namespace Golem15\Apparatus\Tests\Unit\Classes;
 
 use Golem15\Apparatus\Classes\DatabaseManager;
-use Golem15\Apparatus\Tests\PluginTestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests for the DatabaseManager class.
@@ -9,7 +9,7 @@ use Golem15\Apparatus\Tests\PluginTestCase;
  * DatabaseManager is a thin wrapper extending Illuminate\Database\DatabaseManager
  * for Laravel 5.1 compatibility. A class inheritance test is sufficient here.
  */
-class DatabaseManagerTest extends PluginTestCase
+class DatabaseManagerTest extends TestCase
 {
     // -------------------------------------------------------------------------
     // Inheritance
