@@ -292,10 +292,14 @@ class Plugin extends PluginBase
         // Register blog URL validation middleware
         $this->registerBlogValidationMiddleware();
 
-        // Register API token middleware alias
+        // Register API middleware aliases
         $this->app['router']->aliasMiddleware(
             'token.auth',
             \Golem15\Apparatus\Middleware\TokenAuthenticate::class
+        );
+        $this->app['router']->aliasMiddleware(
+            'json.response',
+            \Golem15\Apparatus\Middleware\ForceJsonResponse::class
         );
 
         // Extend Backend User model with API tokens relation
