@@ -9,7 +9,6 @@ use Golem15\Apparatus\ValueObjects\GenerationOptions;
 use System\Models\File;
 use Symfony\Component\Process\Exception\ProcessTimedOutException;
 use Symfony\Component\Process\Process;
-use System\Models\File;
 
 class BrowserGeneration implements ApparatusQueueJob
 {
