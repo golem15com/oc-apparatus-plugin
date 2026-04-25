@@ -126,7 +126,6 @@ class BackendInjectorTest extends PluginTestCase
     private function readProtected(object $object, string $property): mixed
     {
         $ref = new \ReflectionProperty($object::class, $property);
-        $ref->setAccessible(true);
         return $ref->getValue($object);
     }
 }

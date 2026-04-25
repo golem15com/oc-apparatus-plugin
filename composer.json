@@ -5,7 +5,7 @@
     "repositories": [
         {
             "type": "vcs",
-            "url": "https://bitbucket.org/keiosdevs/laravel-apparatus.git"
+            "url": "git@github.com:golem15com/laravel-apparatus.git"
         }
     ],
     "authors": [
