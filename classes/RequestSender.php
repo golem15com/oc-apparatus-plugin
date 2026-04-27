@@ -114,12 +114,45 @@ public function __construct($bearerToken = null, $contentType = 'application/jso
     }
 
     /**
+     * Validate URL to prevent SSRF attacks by blocking private/reserved IP ranges.
+     *
+     * @param string $url
+     * @return void
+     * @throws \InvalidArgumentException
+     */
+    protected function validateUrl(string $url): void
+    {
+        $parsed = parse_url($url);
+        if (empty($parsed['host'])) {
+            throw new \InvalidArgumentException('URL must contain a valid host');
+        }
+        $host = $parsed['host'];
+
+        // Block internal network addresses to prevent SSRF
+        $ip = gethostbyname($host);
+        if ($ip === $host) {
+            // gethostbyname returns the input if resolution fails -- allow it (may be a valid unresolvable host)
+            return;
+        }
+        if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false) {
+            throw new \InvalidArgumentException('URL resolves to a private or reserved IP address');
+        }
+    }
+
+    /**
      * @param array  $data
      * @param string $url
      * @return array|bool
      */
     public function sendGetRequest(array $data, string $url, $ignoreSsl = false)
     {
+        $this->validateUrl($url);
+
+        if ($ignoreSsl && !config('app.debug')) {
+            $ignoreSsl = false;
+            \Log::warning('RequestSender: SSL verification bypass blocked in production');
+        }
+
         $error = false;
         $ch = curl_init();
         $query = http_build_query($data);
@@ -153,6 +186,13 @@ public function __construct($bearerToken = null, $contentType = 'application/jso
 
     public function downloadFile(array $data, string $url, $ignoreSsl = false)
     {
+        $this->validateUrl($url);
+
+        if ($ignoreSsl && !config('app.debug')) {
+            $ignoreSsl = false;
+            \Log::warning('RequestSender: SSL verification bypass blocked in production');
+        }
+
         $error = false;
         $ch = curl_init();
         $query = http_build_query($data);
@@ -162,6 +202,9 @@ public function __construct($bearerToken = null, $contentType = 'application/jso
         $parsedUrl = parse_url($url);
         $path = $parsedUrl['path'];
         $fileName = basename($path);
+        if (empty($fileName) || $fileName === '.' || $fileName === '..') {
+            throw new \InvalidArgumentException('Invalid filename in URL');
+        }
         $saveLocation = storage_path('app/uploads/private/'.$fileName);
         $fp = fopen($saveLocation, 'wb');
         curl_setopt($ch, CURLOPT_URL, $url);
