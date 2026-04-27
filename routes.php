@@ -25,4 +25,5 @@ Route::get(
     }
 )->where('slug', '(.*)?');
 
-Route::post('/_translapi', 'Golem15\Apparatus\Classes\TranslApiController@getTranslations');
+Route::post('/_translapi', 'Golem15\Apparatus\Classes\TranslApiController@getTranslations')
+    ->middleware('throttle:60,1');
