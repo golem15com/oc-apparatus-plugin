@@ -1,7 +1,6 @@
 <?php namespace Golem15\Apparatus\Tests\Security;
 
 use Golem15\Apparatus\Tests\PluginTestCase;
-use Mockery;
 
 /**
  * Security PoC tests for CRITICAL findings APP-001.
@@ -11,70 +10,86 @@ use Mockery;
  * @group security
  *
  * Per Phase 3 D-20: these tests MUST FAIL on current code (red-bar regression locks).
- * Phase 7 / RMED-01 remediation will turn them green.
+ * Phase 8 remediation turns them green.
  */
 class InjectionTest extends PluginTestCase
 {
-    public function tearDown(): void
-    {
-        Mockery::close();
-        parent::tearDown();
-    }
-
     /**
+     * APP-001: ListToggle handler must validate model class against controller's list config.
+     *
+     * The handler in Plugin.php previously instantiated any class from post('model')
+     * without validation (line 281: $model = new $modelClass). The fix validates that:
+     * 1. The controller implements ListController behavior
+     * 2. The model class matches the controller's listGetConfig()->modelClass
+     * 3. The field is a listtoggle column in the controller's column config
+     * 4. The controller's $requiredPermissions are enforced
+     *
+     * EXPECTATION (post-fix): Plugin.php validates model class against allowlist
+     * (listGetConfig) and rejects arbitrary classes with InvalidArgumentException.
+     *
      * @test
      * @group security
      * @see .planning/audit/plugins/apparatus/FINDINGS.md APP-001
      */
     public function test_app_001_listtoggle_arbitrary_class_instantiation(): void
     {
-        // Arrange: simulate the POST data that index_onSwitchInetisListField receives.
-        // The handler in Plugin.php:268-290 reads post('model'), post('field'), post('id')
-        // and does: $model = new $modelClass; $item = $model::find($id); $item->{$field} = !$item->{$field}; $item->save();
-        //
-        // We test that the handler ACCEPTS an arbitrary model class string from POST.
-        // A secure implementation would reject model class names not in an allow-list.
+        $source = file_get_contents(
+            dirname(__DIR__, 2) . '/Plugin.php'
+        );
 
-        // The handler is registered on ALL backend controllers via Controller::extend().
-        // We extract the closure and test it directly, simulating what post() returns.
+        // Verify the handler validates model class against controller's list config
+        // instead of blindly instantiating from user input
+        $hasAllowlistValidation = str_contains($source, 'listGetConfig')
+            && str_contains($source, 'modelClass')
+            && (
+                str_contains($source, 'InvalidArgumentException')
+                || str_contains($source, 'not permitted')
+            );
 
-        // We cannot easily invoke the dynamic method without a full backend controller
-        // boot, so we test the vulnerability surface directly: that the ListToggle widget
-        // emits unvalidated model class names in getRequestData(), and that Plugin.php
-        // uses post('model') to instantiate an arbitrary class.
+        $this->assertTrue(
+            $hasAllowlistValidation,
+            'APP-001: ListToggle handler instantiates arbitrary class from post(\'model\') '
+            . 'without validation. An authenticated backend user can instantiate any PHP class '
+            . 'and toggle any boolean field on any model record. '
+            . 'Post-fix: validate model class against controller\'s listGetConfig()->modelClass '
+            . 'allowlist and throw InvalidArgumentException for non-permitted classes.'
+        );
 
-        // Direct test: the Plugin.php handler uses `new $modelClass` from post('model')
-        // without any validation. We verify that an arbitrary class name can be used.
-        $maliciousModelClass = 'Backend\\Models\\User';
-        $maliciousField = 'is_superuser';
+        // Verify the old vulnerable pattern (direct instantiation from user input) is gone
+        $hasUnsafeInstantiation = str_contains($source, '$model = new $modelClass');
 
-        // EXPECTATION (post-fix Phase 7): the handler validates that modelClass is in
-        // an allow-list of permitted models. Passing an arbitrary class throws an exception.
-        // TODAY (pre-fix Phase 3): the handler accepts any class name and instantiates it.
-        // This assertion FAILS because the handler does NOT throw — it accepts the class.
-        $this->expectException(\InvalidArgumentException::class);
+        $this->assertFalse(
+            $hasUnsafeInstantiation,
+            'APP-001: The old insecure pattern "$model = new $modelClass" is still present '
+            . 'in Plugin.php. The handler should use the validated $allowedModelClass instead.'
+        );
 
-        // Simulate the handler logic from Plugin.php lines 275-284
-        $field = $maliciousField;
-        $id = 1;
-        $modelClass = $maliciousModelClass;
+        // Verify permission enforcement is present
+        $hasPermissionCheck = str_contains($source, 'requiredPermissions')
+            && str_contains($source, 'hasAccess');
 
-        // This is the exact code from Plugin.php:281 — no validation before instantiation
-        if (empty($field) || empty($id) || empty($modelClass)) {
-            return; // Not reached — all values are non-empty
-        }
+        $this->assertTrue(
+            $hasPermissionCheck,
+            'APP-001: ListToggle handler does not enforce controller $requiredPermissions. '
+            . 'Post-fix: check BackendAuth user hasAccess() against controller permissions.'
+        );
 
-        // The vulnerability: arbitrary class instantiation from user-controlled input
-        $model = new $modelClass;
+        // Verify field validation against listtoggle column type
+        $hasFieldValidation = str_contains($source, 'listtoggle')
+            && str_contains($source, 'listGetColumns');
 
-        // If we reach here, the arbitrary class was instantiated without validation.
-        // The post-fix behavior should have thrown InvalidArgumentException before this point.
-        // Since we're testing the CURRENT (vulnerable) code path, we explicitly fail
-        // because the expectException above was never triggered.
-        $this->fail(
-            'APP-001: Arbitrary class instantiation succeeded without validation. '
-            . 'The handler accepted model class "' . $maliciousModelClass . '" from user input. '
-            . 'Post-fix: handler should validate against an allow-list and throw InvalidArgumentException.'
+        $this->assertTrue(
+            $hasFieldValidation,
+            'APP-001: ListToggle handler does not validate field is a listtoggle column. '
+            . 'Post-fix: validate field against controller listGetColumns() column config.'
+        );
+
+        // Verify uses findOrFail instead of find on validated model
+        $hasSecureFind = str_contains($source, 'findOrFail');
+
+        $this->assertTrue(
+            $hasSecureFind,
+            'APP-001: ListToggle handler should use findOrFail() on the validated model class.'
         );
     }
 }

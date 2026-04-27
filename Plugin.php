@@ -274,12 +274,45 @@ class Plugin extends PluginBase
                         $id = post('id');
                         $modelClass = post('model');
                         if (empty($field) || empty($id) || empty($modelClass)) {
-                            Flash::error('Following parameters are required : id, field, model');
-
-                            return null;
+                            throw new \InvalidArgumentException('Required parameters: id, field, model');
                         }
-                        $model = new $modelClass;
-                        $item = $model::find($id);
+
+                        // D-01: Verify controller has ListController behavior
+                        if (!$controller->isClassExtendedWith(\Backend\Behaviors\ListController::class)) {
+                            throw new \InvalidArgumentException('Controller does not implement ListController');
+                        }
+
+                        // D-02: Enforce controller's $requiredPermissions
+                        $requiredPermissions = $controller->requiredPermissions ?? [];
+                        if (!empty($requiredPermissions)) {
+                            $backendUser = \BackendAuth::getUser();
+                            if (!$backendUser || !$backendUser->hasAccess($requiredPermissions)) {
+                                throw new \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException('Insufficient permissions');
+                            }
+                        }
+
+                        // D-01: Validate model class against controller's list config
+                        $listConfig = $controller->listGetConfig();
+                        $allowedModelClass = $listConfig->modelClass ?? null;
+                        if (!$allowedModelClass || ltrim($modelClass, '\\') !== ltrim($allowedModelClass, '\\')) {
+                            throw new \InvalidArgumentException('Model class not permitted for this controller');
+                        }
+
+                        // D-01: Validate field is a listtoggle column
+                        $columnConfig = $controller->listGetColumns();
+                        $isListToggle = false;
+                        foreach ($columnConfig as $colName => $colDef) {
+                            if ($colName === $field && ($colDef->type === 'listtoggle' || (isset($colDef->config['type']) && $colDef->config['type'] === 'listtoggle'))) {
+                                $isListToggle = true;
+                                break;
+                            }
+                        }
+                        if (!$isListToggle) {
+                            throw new \InvalidArgumentException('Field is not a listtoggle column in this controller');
+                        }
+
+                        // All validation passed -- toggle the field
+                        $item = $allowedModelClass::findOrFail($id);
                         $item->{$field} = !$item->{$field};
                         $item->save();
 

@@ -3,6 +3,7 @@
 Route::get(
     '/storage/app/uploads/protected/{slug}',
     function ($slug) {
+        $slug = basename($slug);
         $path = storage_path().'/app/uploads/protected/'.$slug;
 
         if (!\Backend\Facades\BackendAuth::check()) {
