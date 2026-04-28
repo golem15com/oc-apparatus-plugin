@@ -12,6 +12,7 @@ use Golem15\Apparatus\Console\MailImportCommand;
 use Golem15\Apparatus\Console\MailResetCommand;
 use Illuminate\Foundation\AliasLoader;
 use Golem15\Apparatus\Classes\BackendInjector;
+use Golem15\Apparatus\FormWidgets\Sensitive;
 use Golem15\Apparatus\Classes\DependencyInjector;
 use Golem15\Apparatus\Classes\HumanDateExtension;
 use Golem15\Apparatus\Classes\RouteResolver;
@@ -198,6 +199,10 @@ class Plugin extends PluginBase
             KnobWidget::class => [
                 'label' => 'golem15.apparatus::lang.labels.knobFormWidget',
                 'code' => 'knob'
+            ],
+            Sensitive::class => [
+                'label' => 'Sensitive (Snowboard-fix)',
+                'code' => 'g15sensitive'
             ]
         ];
     }
