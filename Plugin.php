@@ -368,6 +368,11 @@ class Plugin extends PluginBase
         \Backend\Controllers\Users::extend(function ($controller) {
             $controller->addDynamicMethod('onCreateApiToken', function () use ($controller) {
                 $user = \Backend\Facades\BackendAuth::getUser();
+                if (!$user) {
+                    throw new \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException(
+                        'Authentication required.'
+                    );
+                }
                 $name = trim(post('token_name', ''));
 
                 if (empty($name)) {
@@ -398,6 +403,11 @@ class Plugin extends PluginBase
 
             $controller->addDynamicMethod('onRevokeApiToken', function () use ($controller) {
                 $user = \Backend\Facades\BackendAuth::getUser();
+                if (!$user) {
+                    throw new \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException(
+                        'Authentication required.'
+                    );
+                }
                 $tokenId = post('token_id');
 
                 $token = PersonalApiToken::where('id', $tokenId)
@@ -441,12 +451,31 @@ class Plugin extends PluginBase
             'filters' => [
                 'ucfirst' => 'ucfirst',
                 'human_date' => [$this, 'humanDateFilter'],
-
+                'raw_safe' => [$this, 'rawSafeFilter'],
             ]
         ];
     }
 
     public function humanDateFilter($dateString) {
         return (new HumanDateExtension())->humanDateFilter($dateString);
+    }
+
+    /**
+     * Sanitize HTML through the D-12 allowlist (HTMLPurifier).
+     *
+     * Returns safe HTML preserving allowed tags (p, br, strong, em, a[href],
+     * h1-h6, ul, ol, li, blockquote, img[src|alt], iframe[src]) while stripping
+     * script, on* handlers, javascript: URLs, and non-allowlisted iframe hosts.
+     *
+     * @param string|null $html Raw HTML input
+     * @return string Sanitized HTML
+     */
+    public function rawSafeFilter(?string $html): string
+    {
+        if ($html === null || $html === '') {
+            return '';
+        }
+
+        return \Golem15\Apparatus\Classes\HtmlSanitizer::clean($html);
     }
 }

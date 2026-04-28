@@ -22,6 +22,7 @@
   "require": {
     "keios/laravel-apparatus": "dev-develop",
     "intervention/image": "dev-main",
-    "hashids/hashids": "5.0.2"
+    "hashids/hashids": "5.0.2",
+    "ezyang/htmlpurifier": "^4.17"
   }
 }
