@@ -3,6 +3,7 @@
 Route::get(
     '/storage/app/uploads/protected/{slug}',
     function ($slug) {
+        $slug = basename($slug);
         $path = storage_path().'/app/uploads/protected/'.$slug;
 
         if (!\Backend\Facades\BackendAuth::check()) {
@@ -24,4 +25,5 @@ Route::get(
     }
 )->where('slug', '(.*)?');
 
-Route::post('/_translapi', 'Golem15\Apparatus\Classes\TranslApiController@getTranslations');
+Route::post('/_translapi', 'Golem15\Apparatus\Classes\TranslApiController@getTranslations')
+    ->middleware('throttle:60,1');

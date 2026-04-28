@@ -7,6 +7,7 @@ return [
         'apparatus' => 'Apparatus',
         'knobFormWidget' => 'Knob Widget',
         'kFwDescription' => 'Widget który jest Knobem',
+        'sensitiveFormWidget' => 'Wrażliwe',
     ],
     'errors' => [
         'pageWithComponentNotFound' => 'Komponent %s nie jest przydzielony do żadnej strony CMS.',

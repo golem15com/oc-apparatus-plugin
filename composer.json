@@ -5,7 +5,7 @@
     "repositories": [
         {
             "type": "vcs",
-            "url": "https://bitbucket.org/keiosdevs/laravel-apparatus.git"
+            "url": "git@github.com:golem15com/laravel-apparatus.git"
         }
     ],
     "authors": [
@@ -22,6 +22,7 @@
   "require": {
     "keios/laravel-apparatus": "dev-develop",
     "intervention/image": "dev-main",
-    "hashids/hashids": "5.0.2"
+    "hashids/hashids": "5.0.2",
+    "ezyang/htmlpurifier": "^4.17"
   }
 }

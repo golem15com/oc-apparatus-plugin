@@ -147,7 +147,6 @@ class RouteResolverTest extends TestCase
     private function callUrlMatchesPattern(string $url, string $pattern): bool
     {
         $method = new ReflectionMethod(RouteResolver::class, 'urlMatchesPattern');
-        $method->setAccessible(true);
         return $method->invoke($this->resolver, $url, $pattern);
     }
 }

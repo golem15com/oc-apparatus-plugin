@@ -13,8 +13,11 @@
     xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd"
 >
     <testsuites>
-        <testsuite name="Golem15.Apparatus">
-            <directory>./tests</directory>
+        <testsuite name="Golem15.Apparatus Unit Tests">
+            <directory>./tests/unit</directory>
+        </testsuite>
+        <testsuite name="Golem15.Apparatus Security Regressions">
+            <directory>./tests/security</directory>
         </testsuite>
     </testsuites>
     <coverage processUncoveredFiles="true">
@@ -36,5 +39,7 @@
         <env name="APP_ENV" value="testing"/>
         <env name="CACHE_DRIVER" value="array"/>
         <env name="SESSION_DRIVER" value="array"/>
+        <env name="DB_CONNECTION" value="sqlite"/>
+        <env name="DB_DATABASE" value=":memory:"/>
     </php>
 </phpunit>

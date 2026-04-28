@@ -16,6 +16,11 @@ use Request;
 class Jobs extends Controller
 {
     /**
+     * @var array Permissions required to view this page.
+     */
+    public $requiredPermissions = ['golem15.apparatus.access_jobs'];
+
+    /**
      * @var array
      */
     public $implement = [

@@ -12,6 +12,7 @@ use Golem15\Apparatus\Console\MailImportCommand;
 use Golem15\Apparatus\Console\MailResetCommand;
 use Illuminate\Foundation\AliasLoader;
 use Golem15\Apparatus\Classes\BackendInjector;
+use Golem15\Apparatus\FormWidgets\Sensitive;
 use Golem15\Apparatus\Classes\DependencyInjector;
 use Golem15\Apparatus\Classes\HumanDateExtension;
 use Golem15\Apparatus\Classes\RouteResolver;
@@ -198,6 +199,10 @@ class Plugin extends PluginBase
             KnobWidget::class => [
                 'label' => 'golem15.apparatus::lang.labels.knobFormWidget',
                 'code' => 'knob'
+            ],
+            Sensitive::class => [
+                'label' => 'golem15.apparatus::lang.labels.sensitiveFormWidget',
+                'code' => 'g15sensitive'
             ]
         ];
     }
@@ -274,12 +279,45 @@ class Plugin extends PluginBase
                         $id = post('id');
                         $modelClass = post('model');
                         if (empty($field) || empty($id) || empty($modelClass)) {
-                            Flash::error('Following parameters are required : id, field, model');
-
-                            return null;
+                            throw new \InvalidArgumentException('Required parameters: id, field, model');
                         }
-                        $model = new $modelClass;
-                        $item = $model::find($id);
+
+                        // D-01: Verify controller has ListController behavior
+                        if (!$controller->isClassExtendedWith(\Backend\Behaviors\ListController::class)) {
+                            throw new \InvalidArgumentException('Controller does not implement ListController');
+                        }
+
+                        // D-02: Enforce controller's $requiredPermissions
+                        $requiredPermissions = $controller->requiredPermissions ?? [];
+                        if (!empty($requiredPermissions)) {
+                            $backendUser = \BackendAuth::getUser();
+                            if (!$backendUser || !$backendUser->hasAccess($requiredPermissions)) {
+                                throw new \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException('Insufficient permissions');
+                            }
+                        }
+
+                        // D-01: Validate model class against controller's list config
+                        $listConfig = $controller->listGetConfig();
+                        $allowedModelClass = $listConfig->modelClass ?? null;
+                        if (!$allowedModelClass || ltrim($modelClass, '\\') !== ltrim($allowedModelClass, '\\')) {
+                            throw new \InvalidArgumentException('Model class not permitted for this controller');
+                        }
+
+                        // D-01: Validate field is a listtoggle column
+                        $columnConfig = $controller->listGetColumns();
+                        $isListToggle = false;
+                        foreach ($columnConfig as $colName => $colDef) {
+                            if ($colName === $field && ($colDef->type === 'listtoggle' || (isset($colDef->config['type']) && $colDef->config['type'] === 'listtoggle'))) {
+                                $isListToggle = true;
+                                break;
+                            }
+                        }
+                        if (!$isListToggle) {
+                            throw new \InvalidArgumentException('Field is not a listtoggle column in this controller');
+                        }
+
+                        // All validation passed -- toggle the field
+                        $item = $allowedModelClass::findOrFail($id);
                         $item->{$field} = !$item->{$field};
                         $item->save();
 
@@ -335,6 +373,11 @@ class Plugin extends PluginBase
         \Backend\Controllers\Users::extend(function ($controller) {
             $controller->addDynamicMethod('onCreateApiToken', function () use ($controller) {
                 $user = \Backend\Facades\BackendAuth::getUser();
+                if (!$user) {
+                    throw new \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException(
+                        'Authentication required.'
+                    );
+                }
                 $name = trim(post('token_name', ''));
 
                 if (empty($name)) {
@@ -365,6 +408,11 @@ class Plugin extends PluginBase
 
             $controller->addDynamicMethod('onRevokeApiToken', function () use ($controller) {
                 $user = \Backend\Facades\BackendAuth::getUser();
+                if (!$user) {
+                    throw new \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException(
+                        'Authentication required.'
+                    );
+                }
                 $tokenId = post('token_id');
 
                 $token = PersonalApiToken::where('id', $tokenId)
@@ -408,12 +456,31 @@ class Plugin extends PluginBase
             'filters' => [
                 'ucfirst' => 'ucfirst',
                 'human_date' => [$this, 'humanDateFilter'],
-
+                'raw_safe' => [$this, 'rawSafeFilter'],
             ]
         ];
     }
 
     public function humanDateFilter($dateString) {
         return (new HumanDateExtension())->humanDateFilter($dateString);
+    }
+
+    /**
+     * Sanitize HTML through the D-12 allowlist (HTMLPurifier).
+     *
+     * Returns safe HTML preserving allowed tags (p, br, strong, em, a[href],
+     * h1-h6, ul, ol, li, blockquote, img[src|alt], iframe[src]) while stripping
+     * script, on* handlers, javascript: URLs, and non-allowlisted iframe hosts.
+     *
+     * @param string|null $html Raw HTML input
+     * @return string Sanitized HTML
+     */
+    public function rawSafeFilter(?string $html): string
+    {
+        if ($html === null || $html === '') {
+            return '';
+        }
+
+        return \Golem15\Apparatus\Classes\HtmlSanitizer::clean($html);
     }
 }

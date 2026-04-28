@@ -7,6 +7,7 @@ return [
         'apparatus' => 'Apparatus',
         'knobFormWidget' => 'Knob FormWidget',
         'kFwDescription' => 'Presents numeric inputs as a knob',
+        'sensitiveFormWidget' => 'Sensitive',
     ],
     'errors' => [
         'pageWithComponentNotFound' => 'Component %s is not bound to any page in CMS.',

@@ -217,21 +217,21 @@ class BlogUrlValidationMiddlewareTest extends PluginTestCase
     private function callParseBlogRoute(Request $request): ?array
     {
         $method = new ReflectionMethod(BlogUrlValidationMiddleware::class, 'parseBlogRoute');
-        $method->setAccessible(true);
+
         return $method->invoke($this->middleware, $request);
     }
 
     private function callGetConfiguredRoutes(): array
     {
         $method = new ReflectionMethod(BlogUrlValidationMiddleware::class, 'getConfiguredRoutes');
-        $method->setAccessible(true);
+
         return $method->invoke($this->middleware);
     }
 
     private function callGenerateCorrectPostUrl(string $base, string $categorySlug, string $postSlug): string
     {
         $method = new ReflectionMethod(BlogUrlValidationMiddleware::class, 'generateCorrectPostUrl');
-        $method->setAccessible(true);
+
         return $method->invoke($this->middleware, $base, $categorySlug, $postSlug);
     }
 }

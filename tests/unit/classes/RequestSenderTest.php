@@ -114,7 +114,6 @@ class RequestSenderTest extends TestCase
     private function getHeaders(RequestSender $sender): array
     {
         $ref = new \ReflectionProperty(RequestSender::class, 'headers');
-        $ref->setAccessible(true);
         return $ref->getValue($sender);
     }
 }
