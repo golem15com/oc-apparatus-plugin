@@ -75,7 +75,10 @@ class RedactCredentialsTap
     protected function scrubString(string $s): string
     {
         foreach (static::PATTERNS as $pattern => $replacement) {
-            $s = preg_replace($pattern, $replacement, $s);
+            $result = preg_replace($pattern, $replacement, $s);
+            if ($result !== null) {
+                $s = $result;
+            }
         }
 
         return $s;
