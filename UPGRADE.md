@@ -57,6 +57,59 @@ Update `golem15/apparatus` to `^2.0` in downstream composer.json (MAJOR version 
 
 ---
 
+## APP-005: RequestSender SSL bypass restricted and SSRF protection added
+
+**Severity:** MEDIUM
+**Breaking change:** `sendGetRequest()` and `downloadFile()` now validate URLs against SSRF (blocking private/reserved IP ranges) and restrict `$ignoreSsl=true` to debug mode only.
+
+### What changed
+
+The `RequestSender` class methods `sendGetRequest()` and `downloadFile()` now call a `validateUrl()` method before making HTTP requests. This method resolves the target hostname via `gethostbyname()` and rejects URLs that resolve to private (10.x, 172.16-31.x, 192.168.x) or reserved (169.254.x, 127.x, ::1) IP ranges using PHP's `FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE` flags.
+
+Additionally, the `$ignoreSsl` parameter (which disables `CURLOPT_SSL_VERIFYPEER`) is now gated behind `config('app.debug')`. In production mode (`APP_DEBUG=false`), passing `$ignoreSsl=true` is silently overridden to `false` and a warning is logged: "RequestSender: SSL verification bypass blocked in production".
+
+### Migration steps
+
+1. **Callers passing `$ignoreSsl=true` for self-signed certificates in development:** Set `APP_DEBUG=true` in your `.env` file. SSL bypass only works when debug mode is enabled.
+2. **Callers using RequestSender with internal/private network URLs** (e.g., `http://192.168.1.100/api`, `http://10.0.0.5/webhook`): These URLs will now throw `\InvalidArgumentException('URL resolves to a private or reserved IP address')`. Refactor to use a direct cURL call or a non-validated HTTP client for intentional internal network communication.
+3. **Callers using RequestSender with hostnames that do not resolve via DNS:** These are allowed through (gethostbyname returns the input string when resolution fails). No action needed.
+
+### Before / after code
+
+```php
+// Before (vulnerable) -- SSL bypass in production, no SSRF protection
+$sender = new RequestSender();
+$result = $sender->sendGetRequest(['key' => 'val'], 'http://169.254.169.254/latest/meta-data/', true);
+// Successfully fetches cloud metadata endpoint in production
+
+// After (secure) -- SSRF blocked, SSL bypass restricted to debug mode
+$sender = new RequestSender();
+$result = $sender->sendGetRequest(['key' => 'val'], 'http://169.254.169.254/latest/meta-data/', true);
+// Throws: \InvalidArgumentException('URL resolves to a private or reserved IP address')
+
+// After -- SSL bypass in production is silently disabled
+$sender = new RequestSender();
+$result = $sender->sendGetRequest([], 'https://self-signed.example.com', true);
+// In production: $ignoreSsl overridden to false, warning logged
+// In debug: $ignoreSsl=true works as before
+```
+
+### Required env / config changes
+
+- `APP_DEBUG=true` in `.env` is now required for `$ignoreSsl=true` to take effect. This should already be set in development environments.
+
+### Composer constraint changes (if any)
+
+None specific to APP-005. The overall Apparatus version bump to `^2.0` (from APP-001) covers this change.
+
+### Verification
+
+- Run `vendor/bin/phpunit --testsuite=Golem15.Apparatus --filter="Security" --no-coverage` -- the `RequestSenderSsrfTest` (APP-005 PoC) should PASS.
+- In a production-configured environment (`APP_DEBUG=false`), confirm that `sendGetRequest()` with a private IP URL throws `\InvalidArgumentException`.
+- In a production-configured environment, confirm that passing `$ignoreSsl=true` does NOT disable SSL verification (check curl behavior or log output).
+
+---
+
 ## Phase 12 (Security Remediation)
 
 ### Breaking Changes
