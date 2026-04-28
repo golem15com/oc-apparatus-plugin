@@ -54,3 +54,34 @@ Update `golem15/apparatus` to `^2.0` in downstream composer.json (MAJOR version 
 - Run `vendor/bin/phpunit --configuration plugins/golem15/apparatus/phpunit.xml --group security` -- the `test_app_001_listtoggle_arbitrary_class_instantiation` test should PASS after applying the fix.
 - Manually verify in the backend that ListToggle columns still function correctly on all controllers that use them (Payments, Orders, Jobs, etc.).
 - Attempt to POST a non-registered model class to the handler and verify a 403 response is returned.
+
+---
+
+## Phase 12 (Security Remediation)
+
+### Breaking Changes
+
+- **New composer dependency:** `ezyang/htmlpurifier ^4.17` -- auto-installed via composer-merge-plugin when running `composer install` from the project root. Required by the new `|raw_safe` Twig filter (D-11/D-12).
+- **API token AJAX handlers (`onCreateApiToken`, `onRevokeApiToken`) now reject unauthenticated requests with HTTP 403** (UTIL-07). Previously the handlers retrieved `BackendAuth::getUser()` but did not throw if it returned null. Any tooling that probed these endpoints without a backend session will now receive 403 instead of a partial response. Backend users editing their own "My Account" page are unaffected.
+
+### New Features
+
+- **`|raw_safe` Twig filter** -- sanitizes HTML through HTMLPurifier with a conservative allowlist (p, br, strong, em, a[href], h1-h6, ul, ol, li, blockquote, img[src|alt], iframe[src]). Iframe `src` is restricted to youtube.com / youtube-nocookie.com / vimeo.com via `URI.SafeIframeRegexp`. URL schemes restricted to http/https/mailto. Use as `{{ html|raw_safe }}` in templates that previously used `|raw`.
+
+- **`RedactCredentialsTap`** -- Monolog tap class at `Golem15\Apparatus\Classes\Logging\RedactCredentialsTap`. Wire into `config/logging.php` channels you want to scrub:
+
+  ```php
+  'single' => [
+      'driver' => 'single',
+      'path' => storage_path('logs/laravel.log'),
+      'level' => env('LOG_LEVEL', 'debug'),
+      'tap' => [\Golem15\Apparatus\Classes\Logging\RedactCredentialsTap::class],
+  ],
+  ```
+
+  Strips `api_key`, `Bearer ...`, `sk-...`, `x-api-key:` patterns from log messages and recursively from context/extra arrays. Recommended for production deploys with Golem (AI), GitHub, and PgStripe plugins.
+
+### Operational Notes
+
+- **HTMLPurifier cache directory:** `storage/framework/cache/htmlpurifier/` is auto-created with mode 0755 on first sanitize call. If your deployment uses stricter permissions, ensure this path is writable by the web user (`chmod -R 775 storage/framework/cache`).
+- **APP_KEY rotation:** Other plugins (Golem, GitHub) now use `Crypt::encryptString` for at-rest secret storage. Rotating `APP_KEY` will make those values unreadable. Document `APP_KEY` carefully in your secrets management.
