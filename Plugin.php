@@ -201,7 +201,7 @@ class Plugin extends PluginBase
                 'code' => 'knob'
             ],
             Sensitive::class => [
-                'label' => 'Sensitive (Snowboard-fix)',
+                'label' => 'golem15.apparatus::lang.labels.sensitiveFormWidget',
                 'code' => 'g15sensitive'
             ]
         ];

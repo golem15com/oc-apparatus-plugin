@@ -43,6 +43,7 @@ return [
         'pluginName' => 'Processeur de scénario de logique métier',
         'apparatus' => 'Appareil',
         'jobs' => 'Emplois',
+        'sensitiveFormWidget' => 'Sensible',
     ],
     'listtoggle' => [
         'title_true' => 'Oui',

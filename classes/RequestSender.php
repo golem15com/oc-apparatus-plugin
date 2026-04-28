@@ -123,15 +123,44 @@ public function __construct($bearerToken = null, $contentType = 'application/jso
     protected function validateUrl(string $url): void
     {
         $parsed = parse_url($url);
-        if (empty($parsed['host'])) {
+        if ($parsed === false || empty($parsed['host'])) {
             throw new \InvalidArgumentException('URL must contain a valid host');
         }
         $host = $parsed['host'];
 
-        // Block internal network addresses to prevent SSRF
+        // parse_url keeps IPv6 hosts wrapped in brackets, e.g. "[::1]"
+        if (strlen($host) >= 2 && $host[0] === '[' && substr($host, -1) === ']') {
+            $host = substr($host, 1, -1);
+        }
+
+        // If host is already an IP literal (v4 or v6), validate it directly --
+        // gethostbyname() returns IP literals unchanged, which would otherwise bypass the filter below.
+        if (filter_var($host, FILTER_VALIDATE_IP) !== false) {
+            if (filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false) {
+                throw new \InvalidArgumentException('URL resolves to a private or reserved IP address');
+            }
+            return;
+        }
+
+        // Resolve to A and AAAA records; reject if any address is private/reserved.
+        $records = @dns_get_record($host, DNS_A | DNS_AAAA);
+        if (!empty($records)) {
+            foreach ($records as $record) {
+                $ip = $record['ip'] ?? $record['ipv6'] ?? null;
+                if ($ip === null) {
+                    continue;
+                }
+                if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false) {
+                    throw new \InvalidArgumentException('URL resolves to a private or reserved IP address');
+                }
+            }
+            return;
+        }
+
+        // Fall back to gethostbyname (IPv4-only) when dns_get_record yields nothing.
         $ip = gethostbyname($host);
         if ($ip === $host) {
-            // gethostbyname returns the input if resolution fails -- allow it (may be a valid unresolvable host)
+            // Unresolvable host -- preserve previous behavior of allowing it through.
             return;
         }
         if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false) {
@@ -194,37 +223,56 @@ public function __construct($bearerToken = null, $contentType = 'application/jso
         }
 
         $error = false;
-        $ch = curl_init();
+        $httpCode = 0;
         $query = http_build_query($data);
         if ($query) {
             $url .= '?'.$query;
         }
         $parsedUrl = parse_url($url);
-        $path = $parsedUrl['path'];
+        $path = $parsedUrl['path'] ?? '';
         $fileName = basename($path);
         if (empty($fileName) || $fileName === '.' || $fileName === '..') {
             throw new \InvalidArgumentException('Invalid filename in URL');
         }
         $saveLocation = storage_path('app/uploads/private/'.$fileName);
-        $fp = fopen($saveLocation, 'wb');
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
-        //curl_setopt($ch, CURLOPT_POSTFIELDS, $requestData);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_FILE, $fp);
-        curl_setopt($ch, CURLOPT_HEADER, 0);
-        if ($ignoreSsl){
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        }
-        $content = curl_exec($ch);
-        if (curl_errno($ch)) {
-            $error = curl_error($ch);
+
+        $ch = null;
+        $fp = null;
+        try {
+            $fp = fopen($saveLocation, 'wb');
+            if ($fp === false) {
+                throw new \RuntimeException('Unable to open file for writing: '.$saveLocation);
+            }
+
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_FILE, $fp);
+            curl_setopt($ch, CURLOPT_HEADER, 0);
+            if ($ignoreSsl) {
+                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            }
+            curl_exec($ch);
+            if (curl_errno($ch)) {
+                $error = curl_error($ch);
+            }
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        } finally {
+            if ($ch !== null) {
+                curl_close($ch);
+            }
+            if (is_resource($fp)) {
+                fclose($fp);
+            }
         }
 
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
+        // Remove a partially written file if the transfer failed
+        if ($error !== false && file_exists($saveLocation)) {
+            @unlink($saveLocation);
+        }
 
         return [
             'code'    => $httpCode,

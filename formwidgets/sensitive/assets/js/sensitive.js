@@ -34,7 +34,7 @@
         }
 
         attachEvents() {
-            this.input.addEventListener('keydown', this.events.input);
+            this.input.addEventListener('input', this.events.input);
             this.toggle.addEventListener('click', this.events.toggle);
 
             if (this.config.get('hideOnTabChange')) {
@@ -47,7 +47,7 @@
         }
 
         destruct() {
-            this.input.removeEventListener('keydown', this.events.input);
+            this.input.removeEventListener('input', this.events.input);
             this.toggle.removeEventListener('click', this.events.toggle);
 
             if (this.config.get('hideOnTabChange')) {
