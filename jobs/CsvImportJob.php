@@ -123,7 +123,8 @@ class CsvImportJob implements ApparatusQueueJob
                     }
                     $entry = null;
                     if ($this->updateExisting) {
-                        // TODO !
+                        // NOTE(g15-starter): update-existing CSV rows is not yet implemented; entries are
+                        // always created. Tracked for next milestone — see G15 Starter g15office task.
                     }
                     if (!$entry) {
                         ++$created;
