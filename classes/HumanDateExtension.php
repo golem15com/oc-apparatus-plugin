@@ -42,13 +42,16 @@ class HumanDateExtension
         }
 
         // In X weeks
-        $weeksDiff = $date->diffInWeeks($now);
+        // Carbon 3 diffIn*() returns a SIGNED FLOAT (Carbon 2 returned an unsigned int). These
+        // comparisons assume forward-looking unsigned magnitude (the isNextWeek/isNextYear guards
+        // above are all future-dated), so force the absolute magnitude — PLUG-08.
+        $weeksDiff = (int) $date->diffInWeeks($now, absolute: true);
         if ($weeksDiff > 1 && $weeksDiff <= 4) {
             return trans('golem15.apparatus::lang.human.date.in_weeks', ['count' => $weeksDiff]);
         }
 
         // In X months
-        $monthsDiff = $date->diffInMonths($now);
+        $monthsDiff = (int) $date->diffInMonths($now, absolute: true);
         if ($monthsDiff > 1 && $monthsDiff <= 12) {
             return trans('golem15.apparatus::lang.human.date.in_months', ['count' => $monthsDiff]);
         }
@@ -59,7 +62,7 @@ class HumanDateExtension
         }
 
         // In X years
-        $yearsDiff = $date->diffInYears($now);
+        $yearsDiff = (int) $date->diffInYears($now, absolute: true);
         if ($yearsDiff >= 1) {
             return trans('golem15.apparatus::lang.human.date.in_years', ['count' => $yearsDiff]);
         }

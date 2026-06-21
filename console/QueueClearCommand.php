@@ -5,8 +5,10 @@ use Illuminate\Contracts\Config\Repository;
 use Illuminate\Queue\QueueManager;
 use Golem15\Apparatus\Classes\Clearer;
 use Golem15\Apparatus\Contracts\Clearer as ClearerContract;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 
+#[AsCommand(name: 'queue:clear')]
 class QueueClearCommand extends Command
 {
     /**

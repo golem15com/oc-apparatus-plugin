@@ -5,7 +5,9 @@ namespace Golem15\Apparatus\Console;
 use Golem15\Apparatus\Classes\JobManager;
 use Golem15\Apparatus\Jobs\FakeJob as FakeJobJob;
 use Illuminate\Console\Command;
+use Symfony\Component\Console\Attribute\AsCommand;
 
+#[AsCommand(name: 'apparatus:fakejob')]
 class FakeJob extends Command
 {
     /**

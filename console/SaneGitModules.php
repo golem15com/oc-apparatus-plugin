@@ -3,11 +3,13 @@
 namespace Golem15\Apparatus\Console;
 
 use Illuminate\Console\Command;
+use Symfony\Component\Console\Attribute\AsCommand;
 
 /**
  * Class SaneModules
  * @package Golem15\Apparatus\Console
  */
+#[AsCommand(name: 'g15:sane-git')]
 class SaneGitModules extends Command
 {
     /**

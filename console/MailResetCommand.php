@@ -1,6 +1,7 @@
 <?php namespace Golem15\Apparatus\Console;
 
 use Illuminate\Console\Command;
+use Symfony\Component\Console\Attribute\AsCommand;
 use System\Models\MailTemplate;
 use System\Models\MailLayout;
 use System\Models\MailPartial;
@@ -15,6 +16,7 @@ use View;
  * @package Golem15\Apparatus\Console
  * @author Golem15
  */
+#[AsCommand(name: 'apparatus:mail-reset')]
 class MailResetCommand extends Command
 {
     /**

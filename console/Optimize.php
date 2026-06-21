@@ -11,11 +11,13 @@ namespace Golem15\Apparatus\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Database\Schema\Blueprint;
+use Symfony\Component\Console\Attribute\AsCommand;
 
 /**
  * Class Optimize
  * @package Golem15\Apparatus\Console
  */
+#[AsCommand(name: 'apparatus:optimize')]
 class Optimize extends Command
 {
     /**
