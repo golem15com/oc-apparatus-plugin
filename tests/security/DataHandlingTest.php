@@ -1,18 +1,19 @@
 <?php namespace Golem15\Apparatus\Tests\Security;
 
 use Golem15\Apparatus\Tests\PluginTestCase;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Security PoC tests for HIGH finding APP-004.
  * Each test method is named test_app_NNN_<short_slug> and references
  * the finding in .planning/audit/plugins/golem15/apparatus/FINDINGS.md.
  *
- * @group security
- *
  * Per Phase 7 D-20: PoC tests use HTTP-only + unit fidelity.
  * These tests MUST FAIL on current code (red-bar regression locks).
  * The remediation milestone's fixes will turn them green.
  */
+#[Group('security')]
 class DataHandlingTest extends PluginTestCase
 {
     /**
@@ -29,11 +30,11 @@ class DataHandlingTest extends PluginTestCase
      * TODAY (pre-fix): $e->getMessage() is always returned regardless of debug mode.
      * This assertion FAILS because the generic error message pattern is absent.
      *
-     * @test
-     * @group security
      * @see .planning/audit/plugins/golem15/apparatus/FINDINGS.md #APP-004
      * @see .planning/audit/DASHBOARD.md #APP-004
      */
+    #[Test]
+    #[Group('security')]
     public function test_app_004_forcejson_exception_message_leakage(): void
     {
         $source = file_get_contents(

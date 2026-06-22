@@ -1,15 +1,16 @@
 <?php namespace Golem15\Apparatus\Tests\Security;
 
 use Golem15\Apparatus\Tests\PluginTestCase;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Security PoC tests for XPLG-002 / UTIL-07: API token AJAX handler auth guard.
  *
  * Uses file_get_contents + str_contains source-pattern analysis (consistent
  * with Phase 7 PoC convention in journal/tests/Security/AccessControlTest.php).
- *
- * @group security
  */
+#[Group('security')]
 class ApiTokenAjaxAuthTest extends PluginTestCase
 {
     protected $refreshPlugins = ['Golem15.Apparatus'];
@@ -21,10 +22,9 @@ class ApiTokenAjaxAuthTest extends PluginTestCase
      * The handlers call BackendAuth::getUser() but do NOT guard against null.
      * Post-fix: each handler has `if (!$user) throw AccessDeniedHttpException`.
      * Today (pre-fix): no guard — assertion FAILS.
-     *
-     * @test
-     * @group security
      */
+    #[Test]
+    #[Group('security')]
     public function test_xplg_002_token_ajax_unauthed(): void
     {
         $pluginPath = dirname(__DIR__, 2) . '/Plugin.php';

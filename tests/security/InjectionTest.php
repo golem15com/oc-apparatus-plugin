@@ -1,17 +1,18 @@
 <?php namespace Golem15\Apparatus\Tests\Security;
 
 use Golem15\Apparatus\Tests\PluginTestCase;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Security PoC tests for CRITICAL findings APP-001.
  * Each test method is named test_app_NNN_<short_slug> and references the finding ID
  * in .planning/audit/plugins/apparatus/FINDINGS.md.
  *
- * @group security
- *
  * Per Phase 3 D-20: these tests MUST FAIL on current code (red-bar regression locks).
  * Phase 8 remediation turns them green.
  */
+#[Group('security')]
 class InjectionTest extends PluginTestCase
 {
     /**
@@ -27,10 +28,10 @@ class InjectionTest extends PluginTestCase
      * EXPECTATION (post-fix): Plugin.php validates model class against allowlist
      * (listGetConfig) and rejects arbitrary classes with InvalidArgumentException.
      *
-     * @test
-     * @group security
      * @see .planning/audit/plugins/apparatus/FINDINGS.md APP-001
      */
+    #[Test]
+    #[Group('security')]
     public function test_app_001_listtoggle_arbitrary_class_instantiation(): void
     {
         $source = file_get_contents(

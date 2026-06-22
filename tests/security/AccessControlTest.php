@@ -1,18 +1,19 @@
 <?php namespace Golem15\Apparatus\Tests\Security;
 
 use Golem15\Apparatus\Tests\PluginTestCase;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Security PoC tests for HIGH findings APP-002, APP-003.
  * Each test method is named test_app_NNN_<short_slug> and references
  * the finding in .planning/audit/plugins/golem15/apparatus/FINDINGS.md.
  *
- * @group security
- *
  * Per Phase 7 D-20: PoC tests use HTTP-only + unit fidelity.
  * These tests MUST FAIL on current code (red-bar regression locks).
  * The remediation milestone's fixes will turn them green.
  */
+#[Group('security')]
 class AccessControlTest extends PluginTestCase
 {
     /**
@@ -28,11 +29,11 @@ class AccessControlTest extends PluginTestCase
      * TODAY (pre-fix): $slug is used unsanitized in path construction.
      * This assertion FAILS because the sanitization pattern is absent.
      *
-     * @test
-     * @group security
      * @see .planning/audit/plugins/golem15/apparatus/FINDINGS.md #APP-002
      * @see .planning/audit/DASHBOARD.md #APP-002
      */
+    #[Test]
+    #[Group('security')]
     public function test_app_002_protected_file_path_traversal(): void
     {
         $source = file_get_contents(
@@ -70,11 +71,11 @@ class AccessControlTest extends PluginTestCase
      * TODAY (pre-fix): $requiredPermissions is not set.
      * This assertion FAILS because the property is absent.
      *
-     * @test
-     * @group security
      * @see .planning/audit/plugins/golem15/apparatus/FINDINGS.md #APP-003
      * @see .planning/audit/DASHBOARD.md #APP-003
      */
+    #[Test]
+    #[Group('security')]
     public function test_app_003_missing_required_permissions_jobs(): void
     {
         $source = file_get_contents(
