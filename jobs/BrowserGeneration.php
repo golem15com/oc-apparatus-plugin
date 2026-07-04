@@ -89,7 +89,7 @@ class BrowserGeneration implements ApparatusQueueJob
 
             Log::info("PDF written OK (" . filesize($this->options->path) . " bytes)");
             $file = new File();
-            $file->is_public = true;
+            $file->is_public = $this->options->isPublic;
             $file->fromFile($this->options->path);
             $file->save();
             // Merge file data with existing job metadata (preserves book_order_id etc.)

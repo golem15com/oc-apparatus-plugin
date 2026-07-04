@@ -13,4 +13,5 @@ class GenerationOptions
     public array $vars = [];
     public int $timeout = 90;
     public array $flags = [];
+    public bool $isPublic = true;
 }
