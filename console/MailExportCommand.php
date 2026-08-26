@@ -1,6 +1,7 @@
 <?php namespace Golem15\Apparatus\Console;
 
 use Illuminate\Console\Command;
+use Golem15\Apparatus\Console\Concerns\HandlesMailLocales;
 use System\Models\MailTemplate;
 use System\Models\MailLayout;
 use System\Models\MailPartial;
@@ -17,6 +18,8 @@ use File;
  */
 class MailExportCommand extends Command
 {
+    use HandlesMailLocales;
+
     /**
      * The console command signature.
      *
@@ -47,6 +50,7 @@ class MailExportCommand extends Command
         'templates' => 0,
         'layouts' => 0,
         'partials' => 0,
+        'locales' => 0,
     ];
 
     /**
@@ -148,7 +152,84 @@ class MailExportCommand extends Command
 
             $this->stats['templates']++;
             $this->line("  <info>✓</info> Exported: {$filename}");
+
+            $this->exportTemplateLocales($template, $filename);
         }
+    }
+
+    /**
+     * Export a template's non-default locales to templates/locales/<code>/.
+     *
+     * Reads the raw stored translation rather than the model accessor, because the
+     * accessor falls back to the default locale when a translation is missing -- which
+     * would write the default language into every locale file. A locale with nothing
+     * translated produces no file at all, so sites that do not use translations see no
+     * change in their mail_templates/ folder.
+     *
+     * @param \System\Models\MailTemplate $template
+     * @param string $filename
+     * @return void
+     */
+    protected function exportTemplateLocales($template, $filename)
+    {
+        if (!$this->isMailModelTranslatable($template)) {
+            return;
+        }
+
+        foreach ($this->getNonDefaultMailLocales() as $locale) {
+            $data = (array) $template->getTranslateAttributes($locale);
+
+            $data = array_filter(
+                array_intersect_key($data, array_flip($this->localeAttributes)),
+                function ($value) {
+                    return trim((string) $value) !== '';
+                }
+            );
+
+            if (empty($data)) {
+                continue;
+            }
+
+            $directory = $this->localeDirectory('templates', $locale);
+
+            if (!File::exists($directory)) {
+                File::makeDirectory($directory, 0755, true);
+            }
+
+            $this->writeFileAtomically(
+                $directory . '/' . $filename,
+                $this->buildLocaleContent($data, $template)
+            );
+
+            $this->stats['locales']++;
+            $this->line("    <info>✓</info> Exported: {$locale}/{$filename}");
+        }
+    }
+
+    /**
+     * Build a locale file in the same three-section shape as a default-locale file.
+     *
+     * @param array $data
+     * @param \System\Models\MailTemplate $template
+     * @return string
+     */
+    protected function buildLocaleContent(array $data, $template)
+    {
+        $subject = $data['subject'] ?? $template->subject;
+
+        $settings = [];
+        $settings[] = 'subject = "' . $this->escapeIniValue($subject) . '"';
+
+        // Winter requires a non-empty description, so fall back to the default locale's.
+        $description = $data['description'] ?? '';
+        if (trim($description) === '') {
+            $description = !empty($template->description) ? $template->description : 'Email template';
+        }
+        $settings[] = 'description = "' . $this->escapeIniValue($description) . '"';
+
+        return implode("\n", $settings)
+            . "\n==\n" . ($data['content_text'] ?? '')
+            . "\n==\n" . ($data['content_html'] ?? '');
     }
 
     /**
@@ -234,7 +315,7 @@ class MailExportCommand extends Command
 
         // Add layout if not default
         if ($template->layout && $template->layout->code !== 'default') {
-            $settings[] = 'layout = "' . $template->layout->code . '"';
+            $settings[] = 'layout = "' . $this->escapeIniValue($template->layout->code) . '"';
         }
 
         $settingsSection = implode("\n", $settings);
@@ -306,12 +387,18 @@ class MailExportCommand extends Command
             return '';
         }
 
-        // Escape double quotes
-        $escaped = str_replace('"', '\\"', $value);
-
-        // Escape newlines for INI format
-        $escaped = str_replace("\n", "\\n", $escaped);
-        $escaped = str_replace("\r", "\\r", $escaped);
+        // parse_ini_string() collapses \\ -> \ and \" -> " inside a quoted value, but
+        // passes every other backslash sequence through untouched. So a literal
+        // backslash is written as four (surviving as two after parsing, which
+        // unescapeIniValue() then halves), while \n and \r are written with a single
+        // backslash and decoded on import.
+        //
+        // Backslashes MUST be escaped first, or the ones added by the steps below
+        // would be escaped in turn and come back doubled.
+        $escaped = str_replace('\\', '\\\\\\\\', $value);
+        $escaped = str_replace('"', '\\"', $escaped);
+        $escaped = str_replace("\n", '\\n', $escaped);
+        $escaped = str_replace("\r", '\\r', $escaped);
 
         return $escaped;
     }
@@ -347,6 +434,7 @@ class MailExportCommand extends Command
                 ['Templates', $this->stats['templates']],
                 ['Layouts', $this->stats['layouts']],
                 ['Partials', $this->stats['partials']],
+                ['Locale variants', $this->stats['locales']],
                 ['<info>Total</info>', '<info>' . array_sum($this->stats) . '</info>'],
             ]
         );

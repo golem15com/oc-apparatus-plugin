@@ -26,6 +26,7 @@ class MailResetCommand extends Command
                             {code? : Specific template code to reset}
                             {--plugin= : Reset all templates for a plugin (e.g., golem15.user)}
                             {--all : Reset all custom templates}
+                            {--reset-layouts : Also reset layouts, discarding any customised layout CSS}
                             {--force : Skip confirmation prompt}';
 
     /**
@@ -219,7 +220,13 @@ class MailResetCommand extends Command
     protected function resetAllTemplates()
     {
         $templates = MailTemplate::where('is_custom', 1)->get();
-        $layouts = MailLayout::where('is_locked', false)->get(); // Don't reset locked system layouts
+        // MailLayout::fillFromView() overwrites content_css with a hard-coded stock
+        // stylesheet, so resetting a layout silently discards a themed one. That is
+        // rarely what someone reaching for "reset the templates" wants, so it is now
+        // opt-in via --reset-layouts.
+        $layouts = $this->option('reset-layouts')
+            ? MailLayout::where('is_locked', false)->get()
+            : collect();
         $partials = MailPartial::where('is_custom', 1)->get();
 
         $total = $templates->count() + $layouts->count() + $partials->count();
@@ -233,6 +240,10 @@ class MailResetCommand extends Command
         $this->warn("This will reset {$total} custom template(s) to plugin versions:");
         $this->line("  Templates: {$templates->count()}");
         $this->line("  Layouts: {$layouts->count()}");
+        if (!$this->option('reset-layouts')) {
+            $this->line('    <comment>(layouts skipped - pass --reset-layouts to include them,</comment>');
+            $this->line('    <comment>     which discards any customised layout CSS)</comment>');
+        }
         $this->line("  Partials: {$partials->count()}");
         $this->newLine();
         $this->error('WARNING: This action cannot be undone!');

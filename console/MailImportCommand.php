@@ -1,6 +1,7 @@
 <?php namespace Golem15\Apparatus\Console;
 
 use Illuminate\Console\Command;
+use Golem15\Apparatus\Console\Concerns\HandlesMailLocales;
 use System\Models\MailTemplate;
 use System\Models\MailLayout;
 use System\Models\MailPartial;
@@ -19,6 +20,8 @@ use DB;
  */
 class MailImportCommand extends Command
 {
+    use HandlesMailLocales;
+
     /**
      * The console command signature.
      *
@@ -49,6 +52,7 @@ class MailImportCommand extends Command
         'templates' => ['created' => 0, 'updated' => 0],
         'layouts' => ['created' => 0, 'updated' => 0],
         'partials' => ['created' => 0, 'updated' => 0],
+        'locales' => ['created' => 0, 'updated' => 0],
     ];
 
     /**
@@ -57,6 +61,13 @@ class MailImportCommand extends Command
      * @var array
      */
     protected $layoutCache = [];
+
+    /**
+     * Flattened filename stem => real template code. Built once per run.
+     *
+     * @var array|null
+     */
+    protected $knownCodeCache = null;
 
     /**
      * Execute the console command.
@@ -96,6 +107,12 @@ class MailImportCommand extends Command
             $this->info('Importing mail templates...');
             $this->importTemplates();
             $this->newLine();
+
+            if (!empty($this->getNonDefaultMailLocales())) {
+                $this->info('Importing template translations...');
+                $this->importTemplateLocales();
+                $this->newLine();
+            }
 
             if ($this->option('dry-run')) {
                 DB::rollBack();
@@ -179,7 +196,7 @@ class MailImportCommand extends Command
 
             try {
                 $content = File::get($file->getPathname());
-                $sections = MailParser::parse($content);
+                $sections = $this->parseSections($content, $filename);
 
                 // Validate required sections
                 if (!isset($sections['settings']['name']) || $sections['settings']['name'] === '') {
@@ -192,7 +209,7 @@ class MailImportCommand extends Command
                 $isNew = !$layout->exists;
 
                 // Update fields
-                $layout->name = $sections['settings']['name'];
+                $layout->name = $this->unescapeIniValue($sections['settings']['name']);
                 $layout->content_html = $sections['html'] ?? '';
                 $layout->content_text = $sections['text'] ?? '';
 
@@ -250,7 +267,7 @@ class MailImportCommand extends Command
 
             try {
                 $content = File::get($file->getPathname());
-                $sections = MailParser::parse($content);
+                $sections = $this->parseSections($content, $filename);
 
                 if (!isset($sections['settings']['name']) || $sections['settings']['name'] === '') {
                     $this->warn("  Skipped {$filename}: Missing 'name' in settings");
@@ -260,7 +277,7 @@ class MailImportCommand extends Command
                 $partial = MailPartial::firstOrNew(['code' => $code]);
                 $isNew = !$partial->exists;
 
-                $partial->name = $sections['settings']['name'];
+                $partial->name = $this->unescapeIniValue($sections['settings']['name']);
                 $partial->content_html = $sections['html'] ?? '';
                 $partial->content_text = $sections['text'] ?? '';
                 $partial->is_custom = 1;
@@ -307,7 +324,7 @@ class MailImportCommand extends Command
 
             try {
                 $content = File::get($file->getPathname());
-                $sections = MailParser::parse($content);
+                $sections = $this->parseSections($content, $filename);
 
                 // Validate required settings
                 if (!isset($sections['settings']['subject']) || $sections['settings']['subject'] === '') {
@@ -325,8 +342,8 @@ class MailImportCommand extends Command
                 $isNew = !$template->exists;
 
                 // Update fields
-                $template->subject = $sections['settings']['subject'];
-                $template->description = $sections['settings']['description'];
+                $template->subject = $this->unescapeIniValue($sections['settings']['subject']);
+                $template->description = $this->unescapeIniValue($sections['settings']['description']);
                 $template->content_html = $sections['html'] ?? '';
                 $template->content_text = $sections['text'] ?? '';
                 $template->is_custom = 1;
@@ -364,39 +381,169 @@ class MailImportCommand extends Command
     }
 
     /**
+     * Import per-locale template overrides from templates/locales/<code>/.
+     *
+     * Translations live in winter_translate_attributes, not in the mail template's own
+     * columns, so these have to go through the model: setAttributeTranslated() followed
+     * by save() lets the Translate behaviour persist them. Writing the table directly
+     * would bypass the behaviour and leave a stale cache behind.
+     *
+     * @return void
+     */
+    protected function importTemplateLocales()
+    {
+        $anyFound = false;
+
+        foreach ($this->getNonDefaultMailLocales() as $locale) {
+            $directory = $this->localeDirectory('templates', $locale);
+
+            if (!File::exists($directory)) {
+                continue;
+            }
+
+            foreach (File::files($directory) as $file) {
+                if ($file->getExtension() !== 'htm') {
+                    continue;
+                }
+
+                $anyFound = true;
+                $filename = $file->getFilename();
+                $code = $this->getCodeFromFilename($filename);
+
+                try {
+                    $sections = $this->parseSections(File::get($file->getPathname()), "{$locale}/{$filename}");
+
+                    if (!isset($sections['settings']['subject']) || $sections['settings']['subject'] === '') {
+                        $this->warn("  Skipped {$locale}/{$filename}: Missing 'subject' in settings");
+                        continue;
+                    }
+
+                    $template = MailTemplate::where('code', $code)->first();
+
+                    if (!$template) {
+                        $this->warn("  Skipped {$locale}/{$filename}: No template with code {$code}");
+                        continue;
+                    }
+
+                    if (!$this->isMailModelTranslatable($template)) {
+                        $this->warn("  Skipped {$locale}/{$filename}: Mail templates are not translatable on this site");
+                        return;
+                    }
+
+                    $existing = (array) $template->getTranslateAttributes($locale);
+                    $isNew = empty(array_filter($existing, function ($value) {
+                        return trim((string) $value) !== '';
+                    }));
+
+                    $values = [
+                        'subject'      => $this->unescapeIniValue($sections['settings']['subject']),
+                        'description'  => $this->unescapeIniValue($sections['settings']['description'] ?? ''),
+                        'content_text' => $sections['text'] ?? '',
+                        'content_html' => $sections['html'] ?? '',
+                    ];
+
+                    $template->translateContext($locale);
+
+                    foreach ($values as $attribute => $value) {
+                        $template->setAttributeTranslated($attribute, $value, $locale);
+                    }
+
+                    if (!$this->option('dry-run')) {
+                        $template->save();
+                        $this->forgetTranslationCache($template, $locale);
+                    }
+
+                    if ($isNew) {
+                        $this->stats['locales']['created']++;
+                        $this->line("  <info>✓ Created:</info> {$locale}/{$filename} <comment>(code: {$code})</comment>");
+                    } else {
+                        $this->stats['locales']['updated']++;
+                        $this->line("  <comment>✓ Updated:</comment> {$locale}/{$filename} <comment>(code: {$code})</comment>");
+                    }
+
+                } catch (\Exception $e) {
+                    $this->error("  Failed to import {$locale}/{$filename}: " . $e->getMessage());
+                }
+            }
+        }
+
+        if (!$anyFound) {
+            $this->line('  <comment>No locale files found.</comment>');
+        }
+    }
+
+    /**
      * Convert filename back to template code
      *
-     * Winter CMS plugin codes follow the pattern: author.plugin::template.name
-     * When exported, the :: is replaced with a dot: author.plugin.template.name.htm
+     * Export flattens the :: separator to a dot (author.plugin::mail.activate becomes
+     * author.plugin.mail.activate.htm), which loses where the separator was. Guessing
+     * that it always sits after the first two segments is wrong for module-scoped
+     * codes: backend::mail.invite would come back as backend.mail::invite and silently
+     * create a duplicate row instead of updating the real template.
+     *
+     * So resolve against the codes that actually exist first -- every registered and
+     * stored template, flattened the same way export flattens them -- and only fall
+     * back to the author.plugin heuristic for a genuinely new file.
      *
      * Examples:
      *   golem15.user.mail.activate.htm -> golem15.user::mail.activate
-     *   backend.mail.invite.htm -> backend::mail.invite
-     *   default.htm -> default (no ::)
+     *   backend.mail.invite.htm        -> backend::mail.invite
+     *   default.htm                    -> default (no ::)
      *
      * @param string $filename
      * @return string
      */
     protected function getCodeFromFilename($filename)
     {
-        $code = str_replace('.htm', '', $filename);
+        $code = preg_replace('/\\.htm$/', '', $filename);
 
-        // Check if this is a plugin template (has at least 3 parts: author.plugin.template)
-        $parts = explode('.', $code);
-        $partCount = count($parts);
+        $known = $this->getKnownTemplateCodes();
 
-        if ($partCount >= 3) {
-            // For plugin templates, the :: separator goes after author.plugin (first two parts)
-            // golem15.user.mail.activate -> golem15.user::mail.activate
-            $author = $parts[0];
-            $plugin = $parts[1];
-            $templatePath = implode('.', array_slice($parts, 2));
-
-            return $author . '.' . $plugin . '::' . $templatePath;
+        if (isset($known[$code])) {
+            return $known[$code];
         }
 
-        // Simple code without plugin namespace (e.g., "default", "system")
+        // Unknown file: assume the plugin convention, author.plugin::the.rest
+        $parts = explode('.', $code);
+
+        if (count($parts) >= 3) {
+            return $parts[0] . '.' . $parts[1] . '::' . implode('.', array_slice($parts, 2));
+        }
+
+        // Simple code without a namespace (e.g. "default", "system")
         return $code;
+    }
+
+    /**
+     * Map of flattened filename stem => real template code, for every code the system
+     * knows about (registered by a plugin, or already stored in the database).
+     *
+     * @return array
+     */
+    protected function getKnownTemplateCodes()
+    {
+        if ($this->knownCodeCache !== null) {
+            return $this->knownCodeCache;
+        }
+
+        $codes = MailTemplate::pluck('code')->all();
+
+        try {
+            $codes = array_merge(
+                $codes,
+                array_keys(\System\Classes\MailManager::instance()->listRegisteredTemplates())
+            );
+        } catch (\Exception $e) {
+            // Registration is unavailable in some contexts; the database list still applies.
+        }
+
+        $this->knownCodeCache = [];
+
+        foreach (array_unique($codes) as $code) {
+            $this->knownCodeCache[str_replace('::', '.', $code)] = $code;
+        }
+
+        return $this->knownCodeCache;
     }
 
     /**
@@ -415,6 +562,36 @@ class MailImportCommand extends Command
     }
 
     /**
+     * Parse a mail file, refusing to silently drop content.
+     *
+     * MailParser splits on every line starting with two or more "=" but only reads the
+     * first three sections, so a rule like "====" written at column 0 inside an HTML
+     * body truncates the template with no warning at all. Detect that and fail loudly
+     * -- the import runs in a transaction, so throwing rolls the whole run back rather
+     * than half-writing a mangled template.
+     *
+     * @param string $content
+     * @param string $filename
+     * @return array
+     * @throws \Exception
+     */
+    protected function parseSections($content, $filename)
+    {
+        $sectionCount = count(preg_split('/^={2,}\s*/m', $content, -1));
+
+        if ($sectionCount > 3) {
+            throw new \Exception(sprintf(
+                '%s has %d sections but the format allows 3. A line starting with "==" '
+                . 'inside the body would be silently truncated - indent it or remove it.',
+                $filename,
+                $sectionCount
+            ));
+        }
+
+        return MailParser::parse($content);
+    }
+
+    /**
      * Unescape INI value (reverse of export escaping)
      *
      * @param string $value
@@ -422,10 +599,28 @@ class MailImportCommand extends Command
      */
     protected function unescapeIniValue($value)
     {
-        $unescaped = str_replace('\\"', '"', $value);
-        $unescaped = str_replace('\\n', "\n", $unescaped);
-        $unescaped = str_replace('\\r', "\r", $unescaped);
-        return $unescaped;
+        if ($value === null) {
+            return '';
+        }
+
+        // parse_ini_string() has already turned \" into " and collapsed each \\ pair,
+        // so what remains are this exporter's own markers.
+        //
+        // A single pass is required. Replacing \\ and then \n sequentially corrupts a
+        // value such as "C:\new": the first pass emits a backslash that the second pass
+        // then reads as the start of a newline escape.
+        return preg_replace_callback('/\\\\(.)/s', function ($matches) {
+            switch ($matches[1]) {
+                case 'n':
+                    return "\n";
+                case 'r':
+                    return "\r";
+                case '\\':
+                    return '\\';
+                default:
+                    return $matches[0];
+            }
+        }, $value);
     }
 
     /**
@@ -458,6 +653,12 @@ class MailImportCommand extends Command
                     $this->stats['partials']['created'],
                     $this->stats['partials']['updated'],
                     $this->stats['partials']['created'] + $this->stats['partials']['updated']
+                ],
+                [
+                    'Locale variants',
+                    $this->stats['locales']['created'],
+                    $this->stats['locales']['updated'],
+                    $this->stats['locales']['created'] + $this->stats['locales']['updated']
                 ],
             ]
         );
